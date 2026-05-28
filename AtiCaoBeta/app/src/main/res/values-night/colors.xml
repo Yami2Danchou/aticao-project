@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg_light">#121212</color>
+    <color name="text_main">#EEEEEE</color>
+    <color name="text_secondary">#BDBDBD</color>
+    <color name="cacao_primary">#A1887F</color>
+    <color name="cacao_primary_dark">#D7CCC8</color>
+
+    <color name="pod_healthy">#81C784</color>
+    <color name="pod_warning">#FFB74D</color>
+    <color name="pod_danger">#EF5350</color>
+
+    <color name="card_bg_accent">#1B5E20</color> <!-- Dark green for the scan card in night mode -->
+</resources>

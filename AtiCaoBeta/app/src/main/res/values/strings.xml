@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">AtiCao</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Navigation Labels -->
+    <string name="label_home">Home</string>
+    <string name="label_detection">Disease Detection</string>
+    <string name="label_history">Scan History</string>
+    <string name="label_info">Cacao Diseases</string>
+    <string name="label_settings">Settings</string>
+
+    <string name="welcome_title">AtiCao</string>
+    <string name="welcome_subtitle">Davao Cacao Disease Detection</string>
+
+    <string name="scan_pod">Scan Cacao Pod</string>
+    <string name="scan_description">Identify diseases using your camera</string>
+
+    <string name="view_history">Scan History</string>
+    <string name="history_description">Review previous pod detections</string>
+
+    <string name="about_diseases">Cacao Diseases</string>
+    <string name="about_description">Learn about common cacao threats</string>
+
+    <string name="btn_capture">Capture</string>
+    <string name="btn_gallery">Gallery</string>
+    <string name="detection_result">Detection Result</string>
+    <string name="confidence_score">Confidence: 0%</string>
+
+    <string name="placeholder_result">Waiting for image…</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <!-- Disease Info -->
+    <string name="black_pod_rot">Black Pod Rot</string>
+    <string name="cacao_pod_borer">Cacao Pod Borer</string>
+    <string name="healthy_pod">Healthy Pod</string>
+
+    <string name="desc_black_pod">Caused by Phytophthora palmivora. It manifests as a small brown spot on the pod that rapidly expands and turns black.</string>
+    <string name="desc_pod_borer">Caused by Conopomorpha cramerella. Larvae tunnel into the pod, causing uneven ripening and clumped beans.</string>
+    <string name="desc_healthy">The pod shows no signs of disease, with uniform color and healthy texture.</string>
+
+    <string name="btn_start_scan">START NEW SCAN</string>
+    <string name="recommendation_label">Action Plan &amp; Recommendations</string>
+    <string name="btn_back_dashboard">BACK TO DASHBOARD</string>
+    <string name="no_history">No scan history found yet.</string>
+
+    <string name="content_desc_pod">Cacao pod image</string>
+
+    <!-- Settings -->
+    <string name="settings_account">Account</string>
+    <string name="settings_edit_profile">Edit Profile</string>
+    <string name="settings_app">App Settings</string>
+    <string name="settings_offline">Offline Mode</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_support">Support</string>
+    <string name="settings_contact">Contact DA-Davao</string>
+    <string name="settings_about">About AtiCao</string>
+    <string name="about_title">About AtiCao</string>
+    <string name="about_message">AtiCao is an AI-powered tool designed to help cacao farmers identify common pests and diseases in cacao pods.\n\nVersion: 1.0.0\nDeveloped by: FiveNightsAtAjIsland</string>
+    <string name="contact_title">Contact Us</string>
+    <string name="contact_message">For support or inquiries, please email us at:\nsupport@aticaobeta.com\n\nFollow us on social media @AtiCaoApp</string>
+    <string name="clear_history_title">Clear History</string>
+    <string name="clear_history_message">Are you sure you want to delete all scan history?</string>
+    <string name="history_cleared">History cleared</string>
+</resources>

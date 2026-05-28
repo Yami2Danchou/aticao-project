@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/FirstFragment">
+
+    <fragment
+        android:id="@+id/FirstFragment"
+        android:name="com.fivenightsatajisland.aticaobeta.FirstFragment"
+        android:label="@string/label_home"
+        tools:layout="@layout/fragment_first">
+        <action
+            android:id="@+id/action_FirstFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_HistoryFragment"
+            app:destination="@id/HistoryFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_InfoFragment"
+            app:destination="@id/InfoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/SecondFragment"
+        android:name="com.fivenightsatajisland.aticaobeta.SecondFragment"
+        android:label="@string/label_detection"
+        tools:layout="@layout/fragment_second">
+        <action
+            android:id="@+id/action_SecondFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/HistoryFragment"
+        android:name="com.fivenightsatajisland.aticaobeta.HistoryFragment"
+        android:label="@string/label_history"
+        tools:layout="@layout/fragment_history" />
+
+    <fragment
+        android:id="@+id/InfoFragment"
+        android:name="com.fivenightsatajisland.aticaobeta.InfoFragment"
+        android:label="@string/label_info"
+        tools:layout="@layout/fragment_info" />
+
+    <fragment
+        android:id="@+id/SettingsFragment"
+        android:name="com.fivenightsatajisland.aticaobeta.SettingsFragment"
+        android:label="@string/label_settings"
+        tools:layout="@layout/fragment_settings" />
+</navigation>
