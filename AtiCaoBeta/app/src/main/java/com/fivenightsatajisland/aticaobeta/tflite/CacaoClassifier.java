@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.util.List;
 import java.util.Map;
-
+//Integrated TensorFlow Lite disease classification model
 public class CacaoClassifier {
     private static final String MODEL_FILE = "aticao_severity.tflite";
     private static final String LABEL_FILE = "labels_severity.txt";
