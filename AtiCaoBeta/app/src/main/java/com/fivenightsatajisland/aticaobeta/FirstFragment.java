@@ -25,7 +25,7 @@ public class FirstFragment extends Fragment {
         return binding.getRoot();
 
     }
-
+//Improved offline inference processing
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
