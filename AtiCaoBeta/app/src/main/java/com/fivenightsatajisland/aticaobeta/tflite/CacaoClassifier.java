@@ -60,7 +60,7 @@ public class CacaoClassifier {
         interpreter.run(tensorImage.getBuffer(), outputBuffer.getBuffer().rewind());
 
         Map<String, Float> labeledProbability = new TensorLabel(labels, outputBuffer).getMapWithFloatValue();
-        
+        //Added detection confidence visualization
         String maxLabel = "";
         float maxProb = -1.0f;
         for (Map.Entry<String, Float> entry : labeledProbability.entrySet()) {
