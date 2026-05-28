@@ -8,6 +8,9 @@ import java.util.List;
 
 @Dao
 public interface ScanHistoryDao {
+    //Added local scan history storage
+
+
     @Query("SELECT * FROM scan_history ORDER BY id DESC")
     List<ScanHistory> getAll();
 
