@@ -19,7 +19,16 @@
         <action
             android:id="@+id/action_FirstFragment_to_InfoFragment"
             app:destination="@id/InfoFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_MonitoringFragment"
+            app:destination="@id/MonitoringFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/MonitoringFragment"
+        android:name="com.fivenightsatajisland.aticaobeta.monitoring.MonitoringFragment"
+        android:label="Monitoring Dashboard"
+        tools:layout="@layout/fragment_monitoring" />
 
     <fragment
         android:id="@+id/SecondFragment"

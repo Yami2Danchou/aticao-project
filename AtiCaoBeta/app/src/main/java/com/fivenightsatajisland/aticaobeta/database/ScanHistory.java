@@ -12,11 +12,13 @@ public class ScanHistory {
     public float confidence;
     public String date;
     public String imagePath;
+    public String severity; // Added severity
 
-    public ScanHistory(String result, float confidence, String date, String imagePath) {
+    public ScanHistory(String result, float confidence, String date, String imagePath, String severity) {
         this.result = result;
         this.confidence = confidence;
         this.date = date;
         this.imagePath = imagePath;
+        this.severity = severity;
     }
 }

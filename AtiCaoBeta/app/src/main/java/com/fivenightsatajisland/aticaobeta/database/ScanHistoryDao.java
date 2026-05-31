@@ -17,6 +17,9 @@ public interface ScanHistoryDao {
     @Insert
     void insert(ScanHistory scanHistory);
 
+    @Query("DELETE FROM scan_history WHERE id = :id")
+    void deleteById(int id);
+
     @Query("DELETE FROM scan_history")
     void deleteAll();
 }

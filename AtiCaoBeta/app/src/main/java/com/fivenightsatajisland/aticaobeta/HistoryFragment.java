@@ -17,151 +17,179 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import android.util.TypedValue;
-import androidx.annotation.ColorInt;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.fivenightsatajisland.aticaobeta.database.AppDatabase;
 import com.fivenightsatajisland.aticaobeta.database.ScanHistory;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.chip.Chip;
 
+import java.io.File;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends Fragment implements ScanHistoryAdapter.OnHistoryItemClickListener {
+
+    private ScanHistoryAdapter adapter;
+    private List<ScanHistory> historyList;
+    private RecyclerView rvHistory;
+    private TextView tvNoHistory;
+    private ImageView ivSortOrder;
+    private boolean isAscending = false;
+    private String currentSort = "Time";
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_history, container, false);
-        LinearLayout historyContainer = view.findViewById(R.id.history_container);
-        TextView tvNoHistory = view.findViewById(R.id.tv_no_history);
-        
-        List<ScanHistory> historyList = AppDatabase.getDatabase(getContext()).scanHistoryDao().getAll();
-        
-        if (historyList.isEmpty()) {
+        return inflater.inflate(R.layout.fragment_history, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        rvHistory = view.findViewById(R.id.rv_history);
+        tvNoHistory = view.findViewById(R.id.tv_no_history);
+        ivSortOrder = view.findViewById(R.id.iv_sort_order);
+
+        adapter = new ScanHistoryAdapter(requireContext(), this);
+        rvHistory.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvHistory.setAdapter(adapter);
+
+        setupSorting(view);
+        loadHistory();
+    }
+
+    private void setupSorting(View view) {
+        Chip chipTime = view.findViewById(R.id.chip_time);
+        Chip chipDisease = view.findViewById(R.id.chip_disease);
+        Chip chipSeverity = view.findViewById(R.id.chip_severity);
+
+        chipTime.setOnClickListener(v -> {
+            currentSort = "Time";
+            applySort();
+        });
+        chipDisease.setOnClickListener(v -> {
+            currentSort = "Disease";
+            applySort();
+        });
+        chipSeverity.setOnClickListener(v -> {
+            currentSort = "Severity";
+            applySort();
+        });
+
+        ivSortOrder.setOnClickListener(v -> {
+            isAscending = !isAscending;
+            ivSortOrder.setImageResource(isAscending ? android.R.drawable.arrow_up_float : android.R.drawable.arrow_down_float);
+            applySort();
+        });
+    }
+
+    private void loadHistory() {
+        historyList = AppDatabase.getDatabase(getContext()).scanHistoryDao().getAll();
+        applySort();
+    }
+
+    private void applySort() {
+        if (historyList == null || historyList.isEmpty()) {
             tvNoHistory.setVisibility(View.VISIBLE);
+            rvHistory.setVisibility(View.GONE);
+            return;
+        }
+
+        tvNoHistory.setVisibility(View.GONE);
+        rvHistory.setVisibility(View.VISIBLE);
+
+        Comparator<ScanHistory> comparator;
+        switch (currentSort) {
+            case "Disease":
+                comparator = (o1, o2) -> o1.result.compareToIgnoreCase(o2.result);
+                break;
+            case "Severity":
+                comparator = (o1, o2) -> {
+                    int s1 = getSeverityValue(o1.severity);
+                    int s2 = getSeverityValue(o2.severity);
+                    return Integer.compare(s1, s2);
+                };
+                break;
+            case "Time":
+            default:
+                comparator = (o1, o2) -> {
+                    SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss", Locale.getDefault());
+                    try {
+                        Date d1 = sdf.parse(o1.date);
+                        Date d2 = sdf.parse(o2.date);
+                        if (d1 != null && d2 != null) return d1.compareTo(d2);
+                    } catch (ParseException e) {
+                        // Fallback to simpler format if needed
+                        try {
+                            SimpleDateFormat sdfShort = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
+                            Date d1 = sdfShort.parse(o1.date);
+                            Date d2 = sdfShort.parse(o2.date);
+                            if (d1 != null && d2 != null) return d1.compareTo(d2);
+                        } catch (ParseException e2) {
+                            return 0;
+                        }
+                    }
+                    return 0;
+                };
+                break;
+        }
+
+        if (isAscending) {
+            Collections.sort(historyList, comparator);
         } else {
-            tvNoHistory.setVisibility(View.GONE);
-            for (ScanHistory history : historyList) {
-                addHistoryItem(historyContainer, history);
-            }
-        }
-        
-        return view;
-    }
-
-    private void addHistoryItem(LinearLayout container, ScanHistory history) {
-        if (getContext() == null) return;
-        
-        MaterialCardView card = new MaterialCardView(getContext());
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, 0, 0, 24);
-        card.setLayoutParams(params);
-        card.setRadius(32f);
-        card.setCardElevation(2f);
-        card.setStrokeWidth(1);
-        
-        TypedValue typedValue = new TypedValue();
-        getContext().getTheme().resolveAttribute(com.google.android.material.R.attr.colorOutline, typedValue, true);
-        card.setStrokeColor(typedValue.data);
-        
-        card.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.white)); // Default card bg
-        // Wait, MaterialCardView handles its own background if not specified, but let's be sure
-        getContext().getTheme().resolveAttribute(com.google.android.material.R.attr.colorSurface, typedValue, true);
-        card.setCardBackgroundColor(typedValue.data);
-
-        card.setContentPadding(32, 32, 32, 32);
-
-        LinearLayout horizontalLayout = new LinearLayout(getContext());
-        horizontalLayout.setOrientation(LinearLayout.HORIZONTAL);
-        horizontalLayout.setGravity(android.view.Gravity.CENTER_VERTICAL);
-
-        ImageView ivThumb = new ImageView(getContext());
-        LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(120, 120);
-        imgParams.setMargins(0, 0, 32, 0);
-        ivThumb.setLayoutParams(imgParams);
-        ivThumb.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        if (history.imagePath != null) {
-            Bitmap thumbnail = decodeSampledBitmapFromUri(Uri.parse(history.imagePath), 120, 120);
-            if (thumbnail != null) {
-                ivThumb.setImageBitmap(thumbnail);
-            } else {
-                ivThumb.setImageResource(android.R.drawable.ic_menu_report_image);
-            }
+            Collections.sort(historyList, Collections.reverseOrder(comparator));
         }
 
-        card.setOnClickListener(v -> showFullImage(history.imagePath, history.result));
-
-        LinearLayout textLayout = new LinearLayout(getContext());
-        textLayout.setOrientation(LinearLayout.VERTICAL);
-
-        TextView tvResult = new TextView(getContext());
-        tvResult.setText(history.result);
-        tvResult.setTextSize(18);
-        tvResult.setTypeface(null, android.graphics.Typeface.BOLD);
-        
-        int color;
-        getContext().getTheme().resolveAttribute(com.google.android.material.R.attr.colorOnSurface, typedValue, true);
-        color = typedValue.data;
-        
-        if (history.result.contains("Black Pod Rot")) color = ContextCompat.getColor(getContext(), R.color.pod_danger);
-        else if (history.result.contains("Pod Borer")) color = ContextCompat.getColor(getContext(), R.color.pod_warning);
-        else if (history.result.contains("Healthy")) color = ContextCompat.getColor(getContext(), R.color.pod_healthy);
-        tvResult.setTextColor(color);
-
-        TextView tvConfidence = new TextView(getContext());
-        tvConfidence.setText(String.format(Locale.getDefault(), "Confidence: %.1f%%", history.confidence));
-        tvConfidence.setTextSize(12);
-        tvConfidence.setTextColor(ContextCompat.getColor(getContext(), R.color.text_secondary));
-
-        TextView tvDate = new TextView(getContext());
-        tvDate.setText(history.date);
-        tvDate.setTextSize(14);
-        tvDate.setTextColor(ContextCompat.getColor(getContext(), R.color.text_secondary));
-
-        textLayout.addView(tvResult);
-        textLayout.addView(tvConfidence);
-        textLayout.addView(tvDate);
-        
-        horizontalLayout.addView(ivThumb);
-        horizontalLayout.addView(textLayout);
-        
-        card.addView(horizontalLayout);
-        container.addView(card);
+        adapter.setHistoryList(historyList);
     }
 
-    private Bitmap decodeSampledBitmapFromUri(Uri uri, int reqWidth, int reqHeight) {
-        if (getContext() == null) return null;
-        try (InputStream input = getContext().getContentResolver().openInputStream(uri)) {
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(input, null, options);
-
-            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-            options.inJustDecodeBounds = false;
-            try (InputStream input2 = getContext().getContentResolver().openInputStream(uri)) {
-                return BitmapFactory.decodeStream(input2, null, options);
-            }
-        } catch (Exception e) {
-            return null;
+    private int getSeverityValue(String severity) {
+        if (severity == null) return 0;
+        switch (severity) {
+            case "Healthy": return 1;
+            case "Mild": return 2;
+            case "Moderate": return 3;
+            case "Severe": return 4;
+            default: return 0;
         }
     }
 
-    private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
+    @Override
+    public void onItemClick(ScanHistory history) {
+        showFullImage(history.imagePath, history.result);
+    }
 
-        if (height > reqHeight || width > reqWidth) {
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-        return inSampleSize;
+    @Override
+    public void onDeleteClick(ScanHistory history) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Delete Scan")
+                .setMessage("Are you sure you want to delete this scan from history?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    // Delete the local file to save space
+                    if (history.imagePath != null && history.imagePath.startsWith("file://")) {
+                        try {
+                            File file = new File(Uri.parse(history.imagePath).getPath());
+                            if (file.exists()) file.delete();
+                        } catch (Exception ignored) {}
+                    }
+                    AppDatabase.getDatabase(getContext()).scanHistoryDao().deleteById(history.id);
+                    loadHistory();
+                    Toast.makeText(getContext(), "Scan deleted", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void showFullImage(String imagePath, String title) {
@@ -170,22 +198,16 @@ public class HistoryFragment extends Fragment {
         Dialog dialog = new Dialog(getContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         
-        // Let's just create a dynamic view for the dialog to avoid needing a new XML file
         LinearLayout layout = new LinearLayout(getContext());
         layout.setOrientation(LinearLayout.VERTICAL);
-        
-        TypedValue typedValue = new TypedValue();
-        getContext().getTheme().resolveAttribute(com.google.android.material.R.attr.colorSurface, typedValue, true);
-        layout.setBackgroundColor(typedValue.data);
-        
+        layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
         layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         layout.setPadding(32, 32, 32, 32);
         layout.setGravity(android.view.Gravity.CENTER);
 
         TextView tvTitle = new TextView(getContext());
         tvTitle.setText(title);
-        getContext().getTheme().resolveAttribute(com.google.android.material.R.attr.colorOnSurface, typedValue, true);
-        tvTitle.setTextColor(typedValue.data);
+        tvTitle.setTextColor(Color.BLACK);
         tvTitle.setTextSize(20);
         tvTitle.setTypeface(null, android.graphics.Typeface.BOLD);
         tvTitle.setPadding(0, 0, 0, 32);
@@ -200,7 +222,16 @@ public class HistoryFragment extends Fragment {
         ImageView imageView = new ImageView(getContext());
         imageView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        imageView.setImageURI(Uri.parse(imagePath));
+        
+        // Safety for full image loading
+        Bitmap bitmap = decodeSampledBitmapFromUri(Uri.parse(imagePath), 800, 800);
+        if (bitmap != null) {
+            imageView.setImageBitmap(bitmap);
+        } else {
+            imageView.setImageResource(android.R.drawable.ic_menu_report_image);
+            Toast.makeText(getContext(), "Could not load full image. It may be missing or corrupted.", Toast.LENGTH_SHORT).show();
+        }
+        
         imageCard.addView(imageView);
 
         MaterialCardView btnClose = new MaterialCardView(getContext());
@@ -208,8 +239,7 @@ public class HistoryFragment extends Fragment {
         btnParams.setMargins(0, 32, 0, 0);
         btnClose.setLayoutParams(btnParams);
         btnClose.setRadius(32f);
-        getContext().getTheme().resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true);
-        btnClose.setCardBackgroundColor(typedValue.data);
+        btnClose.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.cacao_primary));
         
         TextView tvClose = new TextView(getContext());
         tvClose.setText("CLOSE");
@@ -225,13 +255,40 @@ public class HistoryFragment extends Fragment {
         layout.addView(btnClose);
 
         dialog.setContentView(layout);
-        
-        // Ensure dialog doesn't go full screen and hide status/nav bars
         Window window = dialog.getWindow();
         if (window != null) {
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
-
         dialog.show();
+    }
+
+    private Bitmap decodeSampledBitmapFromUri(Uri uri, int reqWidth, int reqHeight) {
+        if (getContext() == null) return null;
+        try (InputStream input = getContext().getContentResolver().openInputStream(uri)) {
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(input, null, options);
+            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+            options.inJustDecodeBounds = false;
+            try (InputStream input2 = getContext().getContentResolver().openInputStream(uri)) {
+                return BitmapFactory.decodeStream(input2, null, options);
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
     }
 }

@@ -6,7 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {ScanHistory.class}, version = 1)
+@Database(entities = {ScanHistory.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract ScanHistoryDao scanHistoryDao();
 
@@ -19,6 +19,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "aticao_database")
                             .allowMainThreadQueries() // Simplification for this app
+                            .fallbackToDestructiveMigration()
                             .build();
                 }
             }

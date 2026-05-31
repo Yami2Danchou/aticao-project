@@ -29,6 +29,7 @@ import com.fivenightsatajisland.aticaobeta.tflite.CacaoClassifier;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -135,10 +136,40 @@ public class SecondFragment extends Fragment {
             
             if (classifier != null) {
                 CacaoClassifier.Recognition result = classifier.classify(bitmap);
-                updateUIWithResult(result.title, result.confidence, uri.toString());
+                
+                // Save a permanent copy of the image for history
+                String permanentPath = saveImageToInternalStorage(uri);
+                
+                updateUIWithResult(result.title, result.confidence, permanentPath);
             }
         } catch (IOException e) {
             Toast.makeText(getContext(), "Error processing image", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private String saveImageToInternalStorage(Uri uri) {
+        try {
+            InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
+            if (inputStream == null) return uri.toString();
+
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.getDefault()).format(new Date());
+            String fileName = "SCAN_" + timeStamp + ".jpg";
+            File file = new File(requireContext().getFilesDir(), fileName);
+            
+            java.io.FileOutputStream out = new java.io.FileOutputStream(file);
+            byte[] buffer = new byte[4096];
+            int read;
+            while ((read = inputStream.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+            out.flush();
+            out.close();
+            inputStream.close();
+            
+            return Uri.fromFile(file).toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return uri.toString();
         }
     }
 
@@ -204,10 +235,17 @@ public class SecondFragment extends Fragment {
         binding.tvRecommendation.setText(android.text.Html.fromHtml(recommendation.toString(), android.text.Html.FROM_HTML_MODE_LEGACY));
         binding.tvResult.setTextColor(getResources().getColor(colorRes, null));
 
+        // Determine severity for history
+        String severity = "N/A";
+        if (rawResult.contains("Mild")) severity = "Mild";
+        else if (rawResult.contains("Moderate")) severity = "Moderate";
+        else if (rawResult.contains("Severe")) severity = "Severe";
+        else if (rawResult.contains("Healthy")) severity = "Healthy";
+
         // Save to history
-        String date = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(new Date());
+        String date = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
         AppDatabase.getDatabase(getContext()).scanHistoryDao().insert(
-                new ScanHistory(result, confidence, date, imagePath)
+                new ScanHistory(result, confidence, date, imagePath, severity)
         );
     }
 

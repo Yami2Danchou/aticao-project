@@ -39,6 +39,10 @@ public class FirstFragment extends Fragment {
         binding.cardInfo.setOnClickListener(v -> 
             NavHostFragment.findNavController(FirstFragment.this)
                     .navigate(R.id.action_FirstFragment_to_InfoFragment));
+
+        binding.cardMonitoring.setOnClickListener(v ->
+            NavHostFragment.findNavController(FirstFragment.this)
+                    .navigate(R.id.action_FirstFragment_to_MonitoringFragment));
     }
 
     private void navigateToSecond() {

@@ -7,6 +7,7 @@
     <string name="label_detection">Disease Detection</string>
     <string name="label_history">Scan History</string>
     <string name="label_info">Cacao Diseases</string>
+    <string name="label_monitoring">Monitoring Dashboard</string>
     <string name="label_settings">Settings</string>
 
     <string name="welcome_title">AtiCao</string>
@@ -20,6 +21,15 @@
 
     <string name="about_diseases">Cacao Diseases</string>
     <string name="about_description">Learn about common cacao threats</string>
+
+    <string name="monitoring_dashboard">Monitoring Dashboard</string>
+    <string name="monitoring_description">Real-time sensor data from ESP32</string>
+    <string name="connection_status_connected">Connected to AtiCao Device</string>
+    <string name="connection_status_disconnected">ESP32 Device Not Found. Please connect to AtiCao WiFi.</string>
+    <string name="last_reading">Last Successful Reading: %s</string>
+    <string name="last_reading_never">Last Successful Reading: Never</string>
+    <string name="retry">Retry</string>
+    <string name="refresh">Refresh</string>
 
     <string name="btn_capture">Capture</string>
     <string name="btn_gallery">Gallery</string>
