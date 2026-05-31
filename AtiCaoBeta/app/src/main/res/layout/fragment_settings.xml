@@ -110,5 +110,15 @@
             android:textColor="@color/pod_danger"
             app:strokeColor="@color/pod_danger"/>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_clear_sensor_history"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Clear Environmental Trends History"
+            android:textColor="@color/pod_danger"
+            app:strokeColor="@color/pod_danger"/>
+
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

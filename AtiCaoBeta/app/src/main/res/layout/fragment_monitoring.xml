@@ -21,202 +21,258 @@
             app:strokeWidth="1dp"
             app:strokeColor="@color/cacao_accent">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:id="@+id/iv_connection_status"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@android:drawable/presence_online"
-                        app:tint="@color/pod_healthy" />
-
-                    <TextView
-                        android:id="@+id/tv_connection_status"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="12dp"
-                        android:text="Connected to AtiCao Device"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_main" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_retry"
-                        style="@style/Widget.MaterialComponents.Button.TextButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Refresh" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <GridLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:columnCount="2"
-                android:alignmentMode="alignMargins"
-                android:columnOrderPreserved="false">
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical">
 
-                <!-- Temperature -->
-                <com.google.android.material.card.MaterialCardView
+                <ImageView
+                    android:id="@+id/iv_connection_status"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@android:drawable/presence_online"
+                    app:tint="@color/pod_healthy"
+                    android:contentDescription="@string/status_icon_desc" />
+
+                <TextView
+                    android:id="@+id/tv_connection_status"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="4dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp"
-                        android:gravity="center">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Temperature"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="12sp" />
-                        <TextView
-                            android:id="@+id/tv_temperature"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="-- °C"
-                            android:textSize="24sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/pod_warning" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/connection_status_connected"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_main" />
 
-                <!-- Humidity -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_retry"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="4dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp"
-                        android:gravity="center">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Humidity"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="12sp" />
-                        <TextView
-                            android:id="@+id/tv_humidity"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="-- %"
-                            android:textSize="24sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/cacao_accent" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-            </GridLayout>
+                    android:text="@string/refresh" />
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_log"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:icon="@android:drawable/ic_menu_save"
+                    android:text="Log"
+                    android:contentDescription="@string/log_reading" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:columnCount="2"
+            android:alignmentMode="alignMargins"
+            android:columnOrderPreserved="false">
+
+            <!-- Temperature -->
             <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
-
+                    android:padding="16dp"
+                    android:gravity="center">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Soil Moisture Status"
-                        android:textSize="16sp"
+                        android:text="@string/temperature_label"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+                    <TextView
+                        android:id="@+id/tv_temperature"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/placeholder_temp"
+                        android:textSize="24sp"
                         android:textStyle="bold"
-                        android:textColor="@color/text_main" />
-
-                    <TextView
-                        android:id="@+id/tv_soil_status"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="CHECKING..."
-                        android:textSize="32sp"
-                        android:textStyle="bold"
-                        android:layout_marginTop="8dp"
-                        android:textColor="@color/pod_healthy" />
-
-                    <TextView
-                        android:id="@+id/tv_soil_raw"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Raw Value: --"
-                        android:layout_marginTop="4dp"
-                        android:textColor="@color/text_secondary" />
+                        android:textColor="@color/pod_warning" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <TextView
-                android:id="@+id/tv_last_update"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Last Successful Reading: Never"
-                android:textAlignment="center"
-                android:textSize="12sp"
-                android:textColor="@color/text_secondary" />
-
-            <ProgressBar
-                android:id="@+id/progress_bar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="24dp"
-                android:visibility="gone" />
-
+            <!-- Humidity -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_wifi_setup"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="#DDDDDD">
-
+                app:cardElevation="2dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
-
+                    android:padding="16dp"
+                    android:gravity="center">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="WiFi Connection Assistant"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
-                        android:textColor="@color/cacao_primary" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_scan_qr"
-                        android:layout_width="match_parent"
+                        android:text="@string/humidity_label"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+                    <TextView
+                        android:id="@+id/tv_humidity"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="Scan ESP32 QR Code"
-                        app:icon="@android:drawable/ic_menu_camera"
-                        android:backgroundTint="@color/cacao_accent" />
+                        android:text="@string/placeholder_hum"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/cacao_accent" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+        </GridLayout>
 
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/soil_moisture_status"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_main" />
+
+                <TextView
+                    android:id="@+id/tv_soil_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/checking"
+                    android:textSize="32sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/pod_healthy" />
+
+                <TextView
+                    android:id="@+id/tv_soil_raw"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/raw_value_placeholder"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/text_secondary" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- TREND GRAPH CARD -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#33FFFFFF"
+            app:cardBackgroundColor="#212121">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/environmental_trends"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white" />
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/sensor_chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:layout_marginTop="12dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp">
+                    <View android:layout_width="12dp" android:layout_height="12dp" android:background="@color/pod_warning"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/legend_temp" android:textSize="11sp" android:layout_marginEnd="16dp" android:textColor="@color/white"/>
+                    <View android:layout_width="12dp" android:layout_height="12dp" android:background="@color/cacao_accent"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/legend_hum" android:textSize="11sp" android:layout_marginEnd="16dp" android:textColor="@color/white"/>
+                    <View android:layout_width="12dp" android:layout_height="12dp" android:background="@color/pod_healthy"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/legend_soil" android:textSize="11sp" android:textColor="@color/white"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/tv_last_update"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/last_reading_never"
+            android:textAlignment="center"
+            android:textSize="12sp"
+            android:textColor="@color/text_secondary" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"
+            android:visibility="gone" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_wifi_setup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#DDDDDD">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/wifi_assistant"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/cacao_primary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_scan_qr"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/scan_esp32_qr"
+                    app:icon="@android:drawable/ic_menu_camera"
+                    android:backgroundTint="@color/cacao_accent" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

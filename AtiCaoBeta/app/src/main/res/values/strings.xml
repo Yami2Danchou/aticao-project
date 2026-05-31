@@ -24,12 +24,44 @@
 
     <string name="monitoring_dashboard">Monitoring Dashboard</string>
     <string name="monitoring_description">Real-time sensor data from ESP32</string>
+    <string name="sensor_history">Environmental Trends History</string>
+    <string name="sensor_history_description">View past sensor logs and data</string>
     <string name="connection_status_connected">Connected to AtiCao Device</string>
     <string name="connection_status_disconnected">ESP32 Device Not Found. Please connect to AtiCao WiFi.</string>
     <string name="last_reading">Last Successful Reading: %s</string>
+    <string name="last_reading_short">Last Reading: %s</string>
     <string name="last_reading_never">Last Successful Reading: Never</string>
     <string name="retry">Retry</string>
     <string name="refresh">Refresh</string>
+
+    <string name="environmental_trends">Environmental Trends</string>
+    <string name="legend_temp"> Temp</string>
+    <string name="legend_hum"> Hum</string>
+    <string name="legend_soil"> Soil</string>
+    <string name="wifi_assistant">WiFi Connection Assistant</string>
+    <string name="scan_esp32_qr">Scan ESP32 QR Code</string>
+    <string name="log_reading">Log Reading</string>
+    <string name="reading_logged">Reading saved to history</string>
+    <string name="clear_trends_title">Clear Trends History</string>
+    <string name="clear_trends_message">Are you sure you want to delete all environmental trends data?</string>
+    <string name="trends_cleared">Trends history cleared</string>
+    <string name="delete_device_history">Delete Device History</string>
+    <string name="delete_device_message">Are you sure you want to delete all sensor logs for %s?</string>
+    <string name="temperature_label">Temperature</string>
+    <string name="humidity_label">Humidity</string>
+    <string name="soil_moisture_status">Soil Moisture Status</string>
+    <string name="checking">CHECKING...</string>
+    <string name="raw_value_placeholder">Value: &#8212;</string>
+    <string name="range_10m">10m</string>
+    <string name="range_1h">1h</string>
+    <string name="range_24h">24h</string>
+    <string name="range_3d">3d</string>
+    <string name="range_1w">1w</string>
+    <string name="range_30d">30d</string>
+    <string name="range_6mo">6mo</string>
+    <string name="placeholder_temp">-- °C</string>
+    <string name="placeholder_hum">-- %</string>
+    <string name="status_icon_desc">Status Icon</string>
 
     <string name="btn_capture">Capture</string>
     <string name="btn_gallery">Gallery</string>
@@ -53,6 +85,7 @@
     <string name="recommendation_label">Action Plan &amp; Recommendations</string>
     <string name="btn_back_dashboard">BACK TO DASHBOARD</string>
     <string name="no_history">No scan history found yet.</string>
+    <string name="no_sensor_history">No sensor logs found for this range.</string>
 
     <string name="content_desc_pod">Cacao pod image</string>
 

@@ -6,9 +6,10 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {ScanHistory.class}, version = 2)
+@Database(entities = {ScanHistory.class, SensorHistory.class}, version = 4)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract ScanHistoryDao scanHistoryDao();
+    public abstract SensorHistoryDao sensorHistoryDao();
 
     private static volatile AppDatabase INSTANCE;
 

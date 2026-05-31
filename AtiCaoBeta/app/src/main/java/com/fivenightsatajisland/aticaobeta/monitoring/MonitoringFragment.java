@@ -2,6 +2,7 @@ package com.fivenightsatajisland.aticaobeta.monitoring;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.LayoutInflater;
@@ -23,6 +24,13 @@ import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanner;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
+
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -46,6 +54,7 @@ public class MonitoringFragment extends Fragment {
         
         viewModel = new ViewModelProvider(this).get(MonitoringViewModel.class);
         
+        setupChart();
         setupObservers();
         setupListeners();
     }
@@ -86,11 +95,96 @@ public class MonitoringFragment extends Fragment {
                 updateUI(data);
             }
         });
+
+        viewModel.history.observe(getViewLifecycleOwner(), this::updateChart);
+    }
+
+    private void setupChart() {
+        LineChart chart = binding.sensorChart;
+        chart.getDescription().setEnabled(false);
+        chart.setTouchEnabled(true);
+        chart.setDragEnabled(true);
+        chart.setScaleEnabled(true);
+        chart.setPinchZoom(false);
+        chart.setDrawGridBackground(true);
+        chart.setGridBackgroundColor(Color.parseColor("#212121"));
+
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        xAxis.setGranularity(1f);
+        xAxis.setTextColor(Color.WHITE);
+        
+        final SimpleDateFormat sdf = new SimpleDateFormat("MMM dd", Locale.getDefault());
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                // Show date only on the first label to avoid duplicates
+                if (value == 0) {
+                    return sdf.format(new Date());
+                }
+                return "";
+            }
+        });
+
+        chart.getAxisLeft().setDrawGridLines(true);
+        chart.getAxisLeft().setGridColor(Color.parseColor("#44FFFFFF"));
+        chart.getAxisLeft().setTextColor(Color.WHITE);
+
+        chart.getAxisRight().setEnabled(false);
+        chart.getLegend().setEnabled(false);
+    }
+
+    private void updateChart(java.util.List<Esp32Data> history) {
+        if (history == null || history.isEmpty()) return;
+
+        // Add Marker View for hovering
+        MonitoringMarkerView marker = new MonitoringMarkerView(requireContext(), R.layout.chart_marker_view, history);
+        marker.setChartView(binding.sensorChart);
+        binding.sensorChart.setMarker(marker);
+
+        java.util.List<Entry> tempEntries = new java.util.ArrayList<>();
+        java.util.List<Entry> humEntries = new java.util.ArrayList<>();
+        java.util.List<Entry> soilEntries = new java.util.ArrayList<>();
+
+        for (int i = 0; i < history.size(); i++) {
+            Esp32Data d = history.get(i);
+            tempEntries.add(new Entry(i, d.getTemperature()));
+            humEntries.add(new Entry(i, d.getHumidity()));
+            soilEntries.add(new Entry(i, d.getSoilMoistureRaw() / 40.95f)); // Scale raw (0-4095) to 0-100% approx
+        }
+
+        LineDataSet tempSet = createDataSet(tempEntries, "Temp", R.color.pod_warning);
+        LineDataSet humSet = createDataSet(humEntries, "Hum", R.color.cacao_accent);
+        LineDataSet soilSet = createDataSet(soilEntries, "Soil", R.color.pod_healthy);
+
+        LineData data = new LineData(tempSet, humSet, soilSet);
+        binding.sensorChart.setData(data);
+        binding.sensorChart.invalidate();
+    }
+
+    private LineDataSet createDataSet(java.util.List<Entry> entries, String label, int colorRes) {
+        LineDataSet set = new LineDataSet(entries, label);
+        set.setColor(ContextCompat.getColor(requireContext(), colorRes));
+        set.setLineWidth(2f);
+        set.setCircleRadius(3f);
+        set.setDrawCircles(true);
+        set.setDrawValues(false);
+        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        set.setCircleColor(ContextCompat.getColor(requireContext(), colorRes));
+        
+        // Add highlighting for dashboard chart
+        set.setHighlightEnabled(true);
+        set.setDrawHighlightIndicators(true);
+        set.setHighLightColor(Color.WHITE);
+
+        return set;
     }
 
     private void setupListeners() {
         binding.btnRetry.setOnClickListener(v -> viewModel.startPolling());
         binding.btnScanQr.setOnClickListener(v -> startQrScanner());
+        binding.btnLog.setVisibility(View.GONE); // Hidden as requested (auto-logging enabled)
     }
 
     private void startQrScanner() {
@@ -129,6 +223,8 @@ public class MonitoringFragment extends Fragment {
             return;
         }
 
+        // Removed SSID setting logic as requested
+
         String displayPassword = (password != null && !password.isEmpty()) ? "********" : "None";
 
         new AlertDialog.Builder(requireContext())
@@ -161,7 +257,7 @@ public class MonitoringFragment extends Fragment {
     private void updateUI(Esp32Data data) {
         binding.tvTemperature.setText(String.format(Locale.getDefault(), "%.1f °C", data.getTemperature()));
         binding.tvHumidity.setText(String.format(Locale.getDefault(), "%.1f %%", data.getHumidity()));
-        binding.tvSoilRaw.setText(String.format(Locale.getDefault(), "Raw Value: %d", data.getSoilMoistureRaw()));
+        binding.tvSoilRaw.setText(String.format(Locale.getDefault(), "Value: %d", data.getSoilMoistureRaw()));
         binding.tvSoilStatus.setText(data.getSoilStatus());
         
         int statusColor;

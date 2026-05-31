@@ -47,6 +47,18 @@ public class SettingsFragment extends Fragment {
                 .show();
         });
 
+        view.findViewById(R.id.btn_clear_sensor_history).setOnClickListener(v -> {
+            new AlertDialog.Builder(requireContext())
+                    .setTitle(R.string.clear_trends_title)
+                    .setMessage(R.string.clear_trends_message)
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        AppDatabase.getDatabase(getContext()).sensorHistoryDao().deleteAll();
+                        Toast.makeText(getContext(), R.string.trends_cleared, Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+        });
+
         return view;
     }
 

@@ -22,7 +22,16 @@
         <action
             android:id="@+id/action_FirstFragment_to_MonitoringFragment"
             app:destination="@id/MonitoringFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_SensorHistoryFragment"
+            app:destination="@id/SensorHistoryFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/SensorHistoryFragment"
+        android:name="com.fivenightsatajisland.aticaobeta.monitoring.SensorHistoryFragment"
+        android:label="Environmental Trends History"
+        tools:layout="@layout/fragment_sensor_history" />
 
     <fragment
         android:id="@+id/MonitoringFragment"
