@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
+    implementation(libs.exifinterface)
 
     implementation(libs.litert)
     implementation(libs.litert.support) {

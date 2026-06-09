@@ -17,14 +17,13 @@ import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.util.List;
 import java.util.Map;
-//Integrated TensorFlow Lite disease classification model
-public class CacaoClassifier {
-    private static final String MODEL_FILE = "aticao_severity.tflite";
-    private static final String LABEL_FILE = "labels_severity.txt";
 
+public class CacaoClassifier {
     private final Interpreter interpreter;
     private final List<String> labels;
-    private final ImageProcessor imageProcessor;
+    private ImageProcessor imageProcessor;
+    private final int inputSize;
+    private final boolean isQuantized;
 
     public static class Recognition {
         public final String title;
@@ -36,31 +35,50 @@ public class CacaoClassifier {
         }
     }
 
-    public CacaoClassifier(Context context) throws IOException {
-        MappedByteBuffer tfliteModel = FileUtil.loadMappedFile(context, MODEL_FILE);
-        interpreter = new Interpreter(tfliteModel);
-        labels = FileUtil.loadLabels(context, LABEL_FILE);
+    public CacaoClassifier(Context context, String modelFile, String labelFile) throws IOException {
+        MappedByteBuffer tfliteModel = FileUtil.loadMappedFile(context, modelFile);
+        Interpreter.Options options = new Interpreter.Options();
+        interpreter = new Interpreter(tfliteModel, options);
+        labels = FileUtil.loadLabels(context, labelFile);
 
-        // Assuming model input size is 224x224. Adjust if necessary.
-        imageProcessor = new ImageProcessor.Builder()
-                .add(new ResizeOp(224, 224, ResizeOp.ResizeMethod.BILINEAR))
-                .add(new NormalizeOp(0.0f, 255.0f))
-                .build();
+        // Dynamically get input shape
+        int[] inputShape = interpreter.getInputTensor(0).shape(); // {1, height, width, 3}
+        inputSize = inputShape[1];
+        
+        // Check if model is quantized
+        isQuantized = interpreter.getInputTensor(0).dataType() == DataType.UINT8;
+
+        setupImageProcessor();
+    }
+
+    private void setupImageProcessor() {
+        ImageProcessor.Builder builder = new ImageProcessor.Builder()
+                .add(new ResizeOp(inputSize, inputSize, ResizeOp.ResizeMethod.BILINEAR));
+
+        if (!isQuantized) {
+            // Standard normalization for many TFLite classification models (maps 0-255 to -1 to 1)
+            // If the model was trained with 0-1, this might need to be (0.0f, 255.0f)
+            // But 127.5f is more common for MobileNet-based transfer learning
+            builder.add(new NormalizeOp(127.5f, 127.5f));
+        }
+
+        imageProcessor = builder.build();
     }
 
     public Recognition classify(Bitmap bitmap) {
-        TensorImage tensorImage = new TensorImage(DataType.FLOAT32);
+        DataType inputDataType = interpreter.getInputTensor(0).dataType();
+        TensorImage tensorImage = new TensorImage(inputDataType);
         tensorImage.load(bitmap);
-        tensorImage = imageProcessor.process(tensorImage);
+        TensorImage processedImage = imageProcessor.process(tensorImage);
 
         int[] outputShape = interpreter.getOutputTensor(0).shape();
         DataType outputDataType = interpreter.getOutputTensor(0).dataType();
         TensorBuffer outputBuffer = TensorBuffer.createFixedSize(outputShape, outputDataType);
 
-        interpreter.run(tensorImage.getBuffer(), outputBuffer.getBuffer().rewind());
+        interpreter.run(processedImage.getBuffer(), outputBuffer.getBuffer().rewind());
 
         Map<String, Float> labeledProbability = new TensorLabel(labels, outputBuffer).getMapWithFloatValue();
-        //Added detection confidence visualization
+
         String maxLabel = "";
         float maxProb = -1.0f;
         for (Map.Entry<String, Float> entry : labeledProbability.entrySet()) {
@@ -70,7 +88,16 @@ public class CacaoClassifier {
             }
         }
 
-        return new Recognition(maxLabel, maxProb * 100);
+        // Return probability as percentage
+        float confidence = maxProb * 100;
+        
+        // If the model is quantized and getMapWithFloatValue didn't dequantize (unlikely with support library),
+        // we would see values up to 255.
+        if (isQuantized && maxProb > 1.0f) {
+            confidence = (maxProb / 255.0f) * 100;
+        }
+
+        return new Recognition(maxLabel, confidence);
     }
 
     public void close() {

@@ -15,7 +15,7 @@ public class Esp32Data {
     @SerializedName("status")
     private String soilStatus;
     
-    private long timestamp; // Local timestamp for charts
+    private long timestamp;
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;

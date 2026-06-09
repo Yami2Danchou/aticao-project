@@ -14,8 +14,10 @@ litert = "2.1.4"
 litertSupport = "1.4.2"
 retrofit = "2.9.0"
 gson = "2.10.1"
+exifinterface = "1.3.6"
 
 [libraries]
+exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

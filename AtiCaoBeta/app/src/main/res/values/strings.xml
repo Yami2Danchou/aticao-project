@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">AtiCao</string>
     <string name="action_settings">Settings</string>
+    <string name="action_language">Language</string>
+    <string name="select_language">Select Language</string>
+    <string name="lang_en">English</string>
+    <string name="lang_bis">Bisaya</string>
+    <string name="lang_tag">Tagalog</string>
 
     <!-- Navigation Labels -->
     <string name="label_home">Home</string>
@@ -84,8 +89,85 @@
     <string name="btn_start_scan">START NEW SCAN</string>
     <string name="recommendation_label">Action Plan &amp; Recommendations</string>
     <string name="btn_back_dashboard">BACK TO DASHBOARD</string>
+
+    <string name="severity_mild"><![CDATA[<b>Severity: Mild</b>]]></string>
+    <string name="severity_moderate"><![CDATA[<b>Severity: Moderate</b>]]></string>
+    <string name="severity_severe"><![CDATA[<b>Severity: Severe</b>]]></string>
+
+    <!-- Black Pod Rot Mild -->
+    <string name="goal_bpr_mild">Eliminate inoculum sources early.</string>
+    <string-array name="items_bpr_mild">
+        <item>Conduct early symptom detection.</item>
+        <item>Remove infected pods immediately and destroy them.</item>
+        <item>Improve drainage around affected trees.</item>
+        <item>Prune lightly to increase airflow and reduce humidity.</item>
+    </string-array>
+    <string name="rec_bpr_mild_footer">Continue weekly scouting, especially during wet weather.</string>
+
+    <!-- Black Pod Rot Moderate -->
+    <string name="goal_bpr_mod">Contain spread within the farm.</string>
+    <string-array name="items_bpr_mod">
+        <item>Intensify pod removal and sanitation.</item>
+        <item>Prune dense canopy and diseased branches.</item>
+        <item>Apply approved fungicides as per local guidelines.</item>
+        <item>Improve water management and avoid waterlogging.</item>
+    </string-array>
+    <string name="rec_bpr_mod_footer">Combine sanitation, pruning, and fungicide as an integrated strategy.</string>
+
+    <!-- Black Pod Rot Severe -->
+    <string name="goal_bpr_sev">Reduce epidemic pressure and protect remaining yield.</string>
+    <string-array name="items_bpr_sev">
+        <item>Remove infected and mummified pods farm-wide.</item>
+        <item>Substantial pruning to open canopy and reduce humidity.</item>
+        <item>Implement an intensive fungicide program.</item>
+        <item>Strengthen drainage and consider replanting with tolerant material.</item>
+    </string-array>
+    <string name="rec_bpr_sev_footer">Use a coordinated, plantation-wide integrated disease management program.</string>
+
+    <!-- Cacao Pod Borer Mild -->
+    <string name="goal_cpb_mild">Prevent spread and protect marketable pods.</string>
+    <string-array name="items_cpb_mild">
+        <item>Harvest ripe pods every 7–10 days to break pest life cycle.</item>
+        <item>Remove and destroy visibly infested pods.</item>
+        <item>Prune lightly to improve airflow and visibility.</item>
+        <item>Keep the farm floor clean of husks and debris.</item>
+    </string-array>
+    <string name="rec_cpb_mild_footer">Continue sanitation and weekly monitoring. Chemical control is usually unnecessary.</string>
+
+    <!-- Cacao Pod Borer Moderate -->
+    <string name="goal_cpb_mod">Reduce population and prevent economic losses.</string>
+    <string-array name="items_cpb_mod">
+        <item>Increase harvest frequency to every 5–7 days.</item>
+        <item>Prune dense canopies and remove chupons.</item>
+        <item>Bag young pods to reduce egg laying.</item>
+        <item>Apply approved insecticides or biological control agents.</item>
+    </string-array>
+    <string name="rec_cpb_mod_footer">Combine sanitation, pruning, and targeted control. Monitor every 1–2 weeks.</string>
+
+    <!-- Cacao Pod Borer Severe -->
+    <string name="goal_cpb_sev">Rapidly suppress the outbreak and restore production.</string>
+    <string-array name="items_cpb_sev">
+        <item>Aggressive harvesting and destruction of infested pods.</item>
+        <item>Reduce canopy density through substantial pruning.</item>
+        <item>Farm-wide pest control operation following local advice.</item>
+        <item>Coordinate control efforts with neighboring farms.</item>
+    </string-array>
+    <string name="rec_cpb_sev_footer">Treat as a farm-wide issue. Maintain strict sanitation to prevent resurgence.</string>
+
+    <string name="rec_healthy_msg"><![CDATA[<font color="#2E7D32"><b>Your cacao pod appears healthy!</b></font><br><br>• Continue regular monitoring every 2 weeks.<br>• Maintain good farm sanitation.<br>• Ensure balanced fertilization.]]></string>
+    <string name="rec_unknown_msg">• No cacao pod detected or image is unclear.</string>
+
     <string name="no_history">No scan history found yet.</string>
     <string name="no_sensor_history">No sensor logs found for this range.</string>
+
+    <string name="compare_models_title">Model Confidence Comparison</string>
+    <string name="compare_data_empty">No data for comparison</string>
+    <string name="btn_close">CLOSE</string>
+    <string name="alpha_model_label">Alpha Model</string>
+    <string name="beta_model_label">Beta Model</string>
+    <string name="btn_alpha">ALPHA MODEL</string>
+    <string name="btn_beta">BETA MODEL</string>
+    <string name="scan_num_prefix">#</string>
 
     <string name="content_desc_pod">Cacao pod image</string>
 
@@ -97,9 +179,18 @@
     <string name="settings_notifications">Notifications</string>
     <string name="settings_support">Support</string>
     <string name="settings_contact">Contact DA-Davao</string>
-    <string name="settings_about">About AtiCao</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_about_support">About &amp; Support</string>
+    <string name="settings_theme_light">Light Theme</string>
+    <string name="settings_theme_dark">Dark Theme</string>
+    <string name="settings_contact_btn">Contact AtiCao</string>
+    <string name="settings_about_btn">About AtiCao</string>
+    <string name="settings_clear_history">Clear Scan History</string>
+    <string name="settings_clear_sensor">Clear Environmental Trends History</string>
+    <string name="settings_detection">Detection Settings</string>
+    <string name="show_rec_images">Show Action Plan Images</string>
     <string name="about_title">About AtiCao</string>
-    <string name="about_message">AtiCao is an AI-powered tool designed to help cacao farmers identify common pests and diseases in cacao pods.\n\nVersion: 1.0.0\nDeveloped by: FiveNightsAtAjIsland</string>
+    <string name="about_message">AtiCao is an AI-powered tool designed to help cacao farmers identify common pests and diseases in cacao pods.\n\nVersion: 1.0.0\nDeveloped by: FiveNightsAtAjIsland\n\nReferences:\n• FAO: Understanding black pod disease in cocoa.\n• Konan &amp; Guest (2007): Black pod rot of cacao (UH Mānoa).\n• Ploetz (2007): Cacao diseases: Important threats to chocolate production.\n• Min. of Agriculture (2017): Black pod disease of cocoa (Trinidad &amp; Tobago).</string>
     <string name="contact_title">Contact Us</string>
     <string name="contact_message">For support or inquiries, please email us at:\nsupport@aticaobeta.com\n\nFollow us on social media @AtiCaoApp</string>
     <string name="clear_history_title">Clear History</string>

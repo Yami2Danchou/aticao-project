@@ -1,0 +1,135 @@
+<resources>
+    <string name="action_settings">Mga Setting</string>
+    <string name="action_language">Wika</string>
+    <string name="select_language">Pumili ng Wika</string>
+    <string name="lang_en">Ingles</string>
+    <string name="lang_bis">Bisaya</string>
+    <string name="lang_tag">Tagalog</string>
+
+    <string name="label_home">Home</string>
+    <string name="label_detection">Pagsusuri ng Sakit</string>
+    <string name="label_history">Kasaysayan ng Scan</string>
+    <string name="label_info">Mga Sakit sa Cacao</string>
+    <string name="label_monitoring">Dashboard ng Pag-monitor</string>
+    <string name="label_settings">Mga Setting</string>
+    <string name="settings_appearance">Itsura</string>
+    <string name="settings_about_support">Tungkol at Suporta</string>
+    <string name="settings_detection">Mga Setting ng Pagsusuri</string>
+    <string name="show_rec_images">Ipakita ang mga Imahe ng Plano ng Aksyon</string>
+    <string name="settings_theme_light">Light Theme</string>
+    <string name="settings_theme_dark">Dark Theme</string>
+    <string name="settings_contact_btn">I-contact ang AtiCao</string>
+    <string name="settings_about_btn">Tungkol sa AtiCao</string>
+    <string name="settings_clear_history">Burahin ang Kasaysayan ng Scan</string>
+    <string name="settings_clear_sensor">Burahin ang Kasaysayan ng Kapaligiran</string>
+
+    <string name="welcome_title">AtiCao</string>
+    <string name="welcome_subtitle">Pagsusuri ng Sakit sa Cacao sa Davao</string>
+
+    <string name="scan_pod">I-scan ang Bunga ng Cacao</string>
+    <string name="scan_description">Kilalanin ang mga sakit gamit ang iyong camera</string>
+
+    <string name="view_history">Kasaysayan ng Scan</string>
+    <string name="history_description">Suriin ang mga nakaraang pagsusuri</string>
+
+    <string name="about_diseases">Mga Sakit sa Cacao</string>
+    <string name="about_description">Matuto tungkol sa mga karaniwang banta sa cacao</string>
+
+    <string name="monitoring_dashboard">Dashboard ng Pag-monitor</string>
+    <string name="monitoring_description">Data mula sa sensor ng ESP32</string>
+
+    <string name="sensor_history">Kasaysayan ng Kapaligiran</string>
+    <string name="sensor_history_description">Tingnan ang mga nakaraang logs ng sensor</string>
+
+    <string name="btn_start_scan">SIMULAN ANG PAG-SCAN</string>
+
+    <string name="detection_result">Resulta ng Pagsusuri</string>
+    <string name="confidence_score">Kumpiyansa: 0%</string>
+    <string name="placeholder_result">Naghihintay ng imahe…</string>
+    <string name="btn_capture">Kumuha ng Larawan</string>
+    <string name="btn_gallery">Galerya</string>
+    <string name="btn_alpha">MODELONG ALPHA</string>
+    <string name="btn_beta">MODELONG BETA</string>
+
+    <string name="severity_mild"><![CDATA[<b>Tindi: Bahagya (Mild)</b>]]></string>
+    <string name="severity_moderate"><![CDATA[<b>Tindi: Katamtaman (Moderate)</b>]]></string>
+    <string name="severity_severe"><![CDATA[<b>Tindi: Malala (Severe)</b>]]></string>
+
+    <!-- Black Pod Rot Mild -->
+    <string name="goal_bpr_mild">Alisin nang maaga ang pinagmumulan ng sakit.</string>
+    <string-array name="items_bpr_mild">
+        <item>Magsagawa ng maagang pagtukoy sa mga sintomas.</item>
+        <item>Alisin agad ang mga bunga na may sakit at sirain ang mga ito.</item>
+        <item>Pagandahin ang daloy ng tubig sa paligid ng mga puno.</item>
+        <item>Bahagyang bawasan ang sanga para sa daloy ng hangin.</item>
+    </string-array>
+    <string name="rec_bpr_mild_footer">Ipagpatuloy ang lingguhang pag-inspeksyon, lalo na kung tag-ulan.</string>
+
+    <!-- Black Pod Rot Moderate -->
+    <string name="goal_bpr_mod">Pigilan ang pagkalat sa loob ng bukid.</string>
+    <string-array name="items_bpr_mod">
+        <item>Paigtingin ang pag-aalis ng bunga at sanitasyon.</item>
+        <item>Bawasan ang malalagong sanga at mga bahaging may sakit.</item>
+        <item>Gumamit ng mga aprubadong fungicide ayon sa alituntunin.</item>
+        <item>Pagandahin ang pamamahala sa tubig sa bukid.</item>
+    </string-array>
+    <string name="rec_bpr_mod_footer">Pagsamahin ang sanitasyon, pruning, at paggamit ng fungicide.</string>
+
+    <!-- Black Pod Rot Severe -->
+    <string name="goal_bpr_sev">Bawasan ang tindi ng epidemya at protektahan ang ani.</string>
+    <string-array name="items_bpr_sev">
+        <item>Malawakang pag-aalis ng lahat ng bunga na may sakit.</item>
+        <item>Matinding pagbabawas ng sanga upang makapasok ang araw.</item>
+        <item>Magpatupad ng fungicide program mula sa mga eksperto.</item>
+        <item>Paigtingin ang drainage at rehabilitasyon ng plantasyon.</item>
+    </string-array>
+    <string name="rec_bpr_sev_footer">Gumamit ng magkakaugnay at malawakang disease management program.</string>
+
+    <!-- Cacao Pod Borer Mild -->
+    <string name="goal_cpb_mild">Pigilan ang pagkalat at protektahan ang mga bunga.</string>
+    <string-array name="items_cpb_mild">
+        <item>Anihin ang mga hinog na bunga tuwing 7–10 araw.</item>
+        <item>Alisin at sirain ang mga bunga na may senyales ng ulod.</item>
+        <item>Bahagyang bawasan ang sanga para sa mas maayos na daloy ng hangin.</item>
+        <item>Panatilihing malinis ang sahig ng bukid.</item>
+    </string-array>
+    <string name="rec_cpb_mild_footer">Ipagpatuloy ang sanitasyon at lingguhang pag-monitor.</string>
+
+    <!-- Cacao Pod Borer Moderate -->
+    <string name="goal_cpb_mod">Bawasan ang populasyon at iwasan ang pagkalugi.</string>
+    <string-array name="items_cpb_mod">
+        <item>Dalasan ang pag-aani tuwing ika-5 hanggang 7 araw.</item>
+        <item>Bawasan ang malalagong sanga at alisin ang mga chupon.</item>
+        <item>Balutin ang mga batang bunga ng plastik.</item>
+        <item>Gumamit ng mga aprubadong insecticide o biological agents.</item>
+    </string-array>
+    <string name="rec_cpb_mod_footer">Pagsamahin ang sanitasyon, pruning, at kontroladong hakbang.</string>
+
+    <!-- Cacao Pod Borer Severe -->
+    <string name="goal_cpb_sev">Mabilis na sugpuin ang peste at ibalik ang produksyon.</string>
+    <string-array name="items_cpb_sev">
+        <item>Agresibong pag-aani at pagira sa mga bunga na may ulod.</item>
+        <item>Bawasan ang kapal ng sanga sa pamamagitan ng pruning.</item>
+        <item>Malawakang operasyon sa pagkontrol sa peste.</item>
+        <item>Makipagtulungan sa mga kalapit na bukid.</item>
+    </string-array>
+    <string name="rec_cpb_sev_footer">Ituring ito bilang malawakang problema sa bukid. Panatilihin ang sanitasyon.</string>
+
+    <string name="rec_healthy_msg"><![CDATA[<font color="#2E7D32"><b>Ang iyong bunga ng cacao ay mukhang malusog!</b></font><br><br>• Ipagpatuloy ang regular na pag-monitor tuwing 2 linggo.<br>• Panatilihin ang kalinisan sa bukid.<br>• Siguraduhin ang balanseng pagpapataba.]]></string>
+    <string name="rec_unknown_msg">• Walay nakitang bunga ng cacao o hindi malinaw ang larawan.</string>
+
+    <!-- Disease Names & Descriptions -->
+    <string name="black_pod_rot">Black Pod Rot</string>
+    <string name="cacao_pod_borer">Cacao Pod Borer</string>
+    <string name="healthy_pod">Malusog na Bunga</string>
+
+    <string name="desc_black_pod">Sanhi ng Phytophthora palmivora. Ito ay nagpapakita bilang maliit na kayumangging batik sa bunga na mabilis na lumalaki at nagiging itim.</string>
+    <string name="desc_pod_borer">Sanhi ng Conopomorpha cramerella. Ang mga uod ay gumagawa ng tunnel sa bunga, na nagiging sanhi ng hindi pantay na pagkahinog.</string>
+    <string name="desc_healthy">Ang bunga ay walang palatandaan ng sakit, may pantay na kulay at malusog na balat.</string>
+
+    <!-- Monitoring & Trends -->
+    <string name="environmental_trends">Kalakaran ng Kapaligiran</string>
+    <string name="temperature_label">Temperatura</string>
+    <string name="humidity_label">Humidity</string>
+    <string name="soil_moisture_status">Katayuan ng Halumigmig ng Lupa</string>
+</resources>

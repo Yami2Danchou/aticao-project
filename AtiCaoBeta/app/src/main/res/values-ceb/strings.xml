@@ -1,0 +1,135 @@
+<resources>
+    <string name="action_settings">Mga Setting</string>
+    <string name="action_language">Pinulongan</string>
+    <string name="select_language">Pagpili og Pinulongan</string>
+    <string name="lang_en">Ingles</string>
+    <string name="lang_bis">Bisaya</string>
+    <string name="lang_tag">Tagalog</string>
+
+    <string name="label_home">Balay</string>
+    <string name="label_detection">Pagsusi sa Sakit</string>
+    <string name="label_history">Kaagi sa Scan</string>
+    <string name="label_info">Mga Sakit sa Cacao</string>
+    <string name="label_monitoring">Dashboard sa Pag-monitor</string>
+    <string name="label_settings">Mga Setting</string>
+    <string name="settings_appearance">Panagway</string>
+    <string name="settings_about_support">Mahitungod ug Suporta</string>
+    <string name="settings_detection">Mga Setting sa Pagsusi</string>
+    <string name="show_rec_images">Ipakita ang mga Hulagway sa Plano sa Aksyon</string>
+    <string name="settings_theme_light">Hayag nga Tema</string>
+    <string name="settings_theme_dark">Ngitngit nga Tema</string>
+    <string name="settings_contact_btn">Kontaka ang AtiCao</string>
+    <string name="settings_about_btn">Mahitungod sa AtiCao</string>
+    <string name="settings_clear_history">Papason ang Kaagi sa Scan</string>
+    <string name="settings_clear_sensor">Papason ang Kaagi sa Kalikopan</string>
+
+    <string name="welcome_title">AtiCao</string>
+    <string name="welcome_subtitle">Pagsusi sa Sakit sa Cacao sa Davao</string>
+
+    <string name="scan_pod">Scan ang Bunga sa Cacao</string>
+    <string name="scan_description">Ilha ang mga sakit gamit ang imong camera</string>
+
+    <string name="view_history">Kaagi sa Scan</string>
+    <string name="history_description">Tan-awa ang mga nangaging pagsusi</string>
+
+    <string name="about_diseases">Mga Sakit sa Cacao</string>
+    <string name="about_description">Pagkat-on bahin sa komon nga mga hulga sa cacao</string>
+
+    <string name="monitoring_dashboard">Dashboard sa Pag-monitor</string>
+    <string name="monitoring_description">Data gikan sa sensor sa ESP32</string>
+
+    <string name="sensor_history">Kaagi sa Kalikopan</string>
+    <string name="sensor_history_description">Tan-awa ang mga nangaging logs sa sensor</string>
+
+    <string name="btn_start_scan">SUGOD PAG-SCAN</string>
+
+    <string name="detection_result">Resulta sa Pagsusi</string>
+    <string name="confidence_score">Kasegurohan: 0%</string>
+    <string name="placeholder_result">Naghulat og hulagway…</string>
+    <string name="btn_capture">Kuha og Hulagway</string>
+    <string name="btn_gallery">Galeriya</string>
+    <string name="btn_alpha">MODELONG ALPHA</string>
+    <string name="btn_beta">MODELONG BETA</string>
+
+    <string name="severity_mild"><![CDATA[<b>Grabe: Hamis (Mild)</b>]]></string>
+    <string name="severity_moderate"><![CDATA[<b>Grabe: Sakto-sakto (Moderate)</b>]]></string>
+    <string name="severity_severe"><![CDATA[<b>Grabe: Hilabihan (Severe)</b>]]></string>
+
+    <!-- Black Pod Rot Mild -->
+    <string name="goal_bpr_mild">Papason ang tinubdan sa sakit og sayo.</string>
+    <string-array name="items_bpr_mild">
+        <item>Pagpahigayon og sayo nga pagsusi sa mga sintomas.</item>
+        <item>Kuhaa dayon ang mga bunga nga naay sakit ug gub-a kini.</item>
+        <item>Pauswaga ang dagan sa tubig sa palibot sa apektadong punoan.</item>
+        <item>Pag-atiman og gamay aron nindot ang dagan sa hangin.</item>
+    </string-array>
+    <string name="rec_bpr_mild_footer">Padayona ang senemana nga pagsusi, ilabi na kung ting-ulan.</string>
+
+    <!-- Black Pod Rot Moderate -->
+    <string name="goal_bpr_mod">Pugngan ang pagkaylap sulod sa umahan.</string>
+    <string-array name="items_bpr_mod">
+        <item>Pakusgan ang pagkuha sa mga bunga ug paglimpyo.</item>
+        <item>Pamub-i ang mga bagotbot nga sanga ug masakiton nga bahin.</item>
+        <item>Paggamit og mga aprobado nga fungicide sumala sa lokal nga sumbanan.</item>
+        <item>Ayuhon ang pagdumala sa tubig aron dili mapundo.</item>
+    </string-array>
+    <string name="rec_bpr_mod_footer">Isagol ang paglimpyo, pag-atiman sa sanga, ug paggamit og fungicide.</string>
+
+    <!-- Black Pod Rot Severe -->
+    <string name="goal_bpr_sev">Paubson ang epidemya ug panalipdan ang nahabilin nga ani.</string>
+    <string-array name="items_bpr_sev">
+        <item>Kuhaa ang tanang bunga nga naay sakit sa tibuok umahan.</item>
+        <item>Bug-at nga pag-atiman sa sanga aron makasulod ang kahayag.</item>
+        <item>Sugdi ang programa sa fungicide nga girekomenda sa mga eksperto.</item>
+        <item>Pakusgan ang drenasye ug plantasyon nga rehabilitasyon.</item>
+    </string-array>
+    <string name="rec_bpr_sev_footer">Paggamit og dungan ug tibuok plantasyon nga programa sa pagdumala sa sakit.</string>
+
+    <!-- Cacao Pod Borer Mild -->
+    <string name="goal_cpb_mild">Pugngan ang pagkaylap ug panalipdan ang mabaligya nga mga bunga.</string>
+    <string-array name="items_cpb_mild">
+        <item>Pag-ani sa mga hinog nga bunga matag 7–10 ka adlaw.</item>
+        <item>Kuhaa ug gub-a ang mga bunga nga klarong naay ulod.</item>
+        <item>Pag-atiman og gamay sa sanga aron nindot ang dagan sa hangin.</item>
+        <item>Hupti ang kalimpyo sa salog sa umahan.</item>
+    </string-array>
+    <string name="rec_cpb_mild_footer">Padayona ang paglimpyo ug senemana nga pag-monitor.</string>
+
+    <!-- Cacao Pod Borer Moderate -->
+    <string name="goal_cpb_mod">Paubson ang gidaghanon sa peste ug likayan ang pagkalugi.</string>
+    <string-array name="items_cpb_mod">
+        <item>Pausbawa ang kasubsob sa pag-ani ngadto sa 5–7 ka adlaw.</item>
+        <item>Pamub-i ang mga bagotbot nga punoan ug chupons.</item>
+        <item>Putsa ang mga bata pa nga bunga og plastik.</item>
+        <item>Paggamit og aprobado nga insecticide o biological agents.</item>
+    </string-array>
+    <string name="rec_cpb_mod_footer">Isagol ang paglimpyo, pag-atiman, ug kontroladong lakang.</string>
+
+    <!-- Cacao Pod Borer Severe -->
+    <string name="goal_cpb_sev">Paspas nga sumpoon ang peste ug ibalik ang produksyon.</string>
+    <string-array name="items_cpb_sev">
+        <item>Agresibo nga pag-ani ug pagguba sa mga bunga nga naay ulod.</item>
+        <item>Paubson ang kabaga sa punoan pinaagi sa pag-atiman.</item>
+        <item>Tibuok-umahan nga operasyon sa pagkontrol sa peste.</item>
+        <item>Pakig-alayon sa mga silingang umahan.</item>
+    </string-array>
+    <string name="rec_cpb_sev_footer">Tagda kini isip tibuok-umahan nga problema. Hupti ang kalimpyo.</string>
+
+    <string name="rec_healthy_msg"><![CDATA[<font color="#2E7D32"><b>Ang imong bunga sa cacao murag himsog!</b></font><br><br>• Padayona ang regular nga pag-monitor matag 2 ka semana.<br>• Hupti ang kalimpyo sa uma.<br>• Siguroha ang husto nga pag-abono.]]></string>
+    <string name="rec_unknown_msg">• Walay nakita nga bunga sa cacao o dili klaro ang hulagway.</string>
+
+    <!-- Disease Names & Descriptions -->
+    <string name="black_pod_rot">Dunot nga Itom (Black Pod Rot)</string>
+    <string name="cacao_pod_borer">Ulod sa Cacao (Cacao Pod Borer)</string>
+    <string name="healthy_pod">Himsog nga Bunga</string>
+
+    <string name="desc_black_pod">Tungod sa Phytophthora palmivora. Kini makita isip gamay nga kape nga spots sa bunga nga paspas nga mobantok ug mahimong itom.</string>
+    <string name="desc_pod_borer">Tungod sa Conopomorpha cramerella. Ang mga ulod mosulod sa bunga, hinungdan sa dili patas nga pagkahinog ug pagtaput sa mga liso.</string>
+    <string name="desc_healthy">Ang bunga walay timailhan sa sakit, naay patas nga kolor ug himsog nga panit.</string>
+
+    <!-- Monitoring & Trends -->
+    <string name="environmental_trends">Kalikopan nga Trend</string>
+    <string name="temperature_label">Temperatura</string>
+    <string name="humidity_label">Kabulahong (Humidity)</string>
+    <string name="soil_moisture_status">Status sa Kabugnaw sa Yuta</string>
+</resources>

@@ -26,6 +26,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fivenightsatajisland.aticaobeta.database.AppDatabase;
 import com.fivenightsatajisland.aticaobeta.database.ScanHistory;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.Chip;
 
@@ -33,6 +38,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -46,6 +52,7 @@ public class HistoryFragment extends Fragment implements ScanHistoryAdapter.OnHi
     private RecyclerView rvHistory;
     private TextView tvNoHistory;
     private ImageView ivSortOrder;
+    private ImageView ivCompareGraph;
     private boolean isAscending = false;
     private String currentSort = "Time";
 
@@ -61,6 +68,7 @@ public class HistoryFragment extends Fragment implements ScanHistoryAdapter.OnHi
         rvHistory = view.findViewById(R.id.rv_history);
         tvNoHistory = view.findViewById(R.id.tv_no_history);
         ivSortOrder = view.findViewById(R.id.iv_sort_order);
+        ivCompareGraph = view.findViewById(R.id.iv_compare_graph);
 
         adapter = new ScanHistoryAdapter(requireContext(), this);
         rvHistory.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -93,6 +101,102 @@ public class HistoryFragment extends Fragment implements ScanHistoryAdapter.OnHi
             ivSortOrder.setImageResource(isAscending ? android.R.drawable.arrow_up_float : android.R.drawable.arrow_down_float);
             applySort();
         });
+
+        ivCompareGraph.setOnClickListener(v -> showComparisonGraph());
+    }
+
+    private void showComparisonGraph() {
+        if (historyList == null || historyList.isEmpty()) {
+            Toast.makeText(getContext(), R.string.compare_data_empty, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Dialog dialog = new Dialog(requireContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        
+        LinearLayout layout = new LinearLayout(getContext());
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.bg_light));
+        layout.setPadding(48, 48, 48, 48);
+        layout.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
+
+        TextView tvTitle = new TextView(getContext());
+        tvTitle.setText(R.string.compare_models_title);
+        tvTitle.setTextSize(20);
+        tvTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_main));
+        tvTitle.setGravity(android.view.Gravity.CENTER);
+        tvTitle.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvTitle.setPadding(0, 0, 0, 48);
+
+        BarChart chart = new BarChart(getContext());
+        chart.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 900));
+
+        List<BarEntry> alphaEntries = new ArrayList<>();
+        List<BarEntry> betaEntries = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+
+        int count = Math.min(10, historyList.size());
+        int i = 0;
+        while (i < count) {
+            ScanHistory h = historyList.get(count - 1 - i); // Chronological
+            alphaEntries.add(new BarEntry(i, h.confidenceAlpha));
+            betaEntries.add(new BarEntry(i, h.confidenceBeta));
+            labels.add(getString(R.string.scan_num_prefix) + (historyList.size() - (count - 1 - i)));
+            i++;
+        }
+
+        BarDataSet setAlpha = new BarDataSet(alphaEntries, getString(R.string.alpha_model_label));
+        setAlpha.setColor(ContextCompat.getColor(requireContext(), R.color.cacao_primary));
+        setAlpha.setValueTextColor(ContextCompat.getColor(requireContext(), R.color.text_main));
+        
+        BarDataSet setBeta = new BarDataSet(betaEntries, getString(R.string.beta_model_label));
+        setBeta.setColor(ContextCompat.getColor(requireContext(), R.color.cacao_accent));
+        setBeta.setValueTextColor(ContextCompat.getColor(requireContext(), R.color.text_main));
+
+        BarData data = new BarData(setAlpha, setBeta);
+        data.setBarWidth(0.35f);
+
+        chart.setData(data);
+        chart.groupBars(0f, 0.2f, 0.05f);
+        chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+        chart.getXAxis().setCenterAxisLabels(true);
+        chart.getXAxis().setPosition(com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM);
+        chart.getXAxis().setGranularity(1f);
+        chart.getXAxis().setAxisMinimum(0f);
+        chart.getXAxis().setAxisMaximum(count);
+        chart.getXAxis().setTextColor(ContextCompat.getColor(requireContext(), R.color.text_secondary));
+        chart.getAxisLeft().setTextColor(ContextCompat.getColor(requireContext(), R.color.text_secondary));
+        chart.getAxisRight().setEnabled(false);
+        chart.getDescription().setEnabled(false);
+        chart.getLegend().setTextColor(ContextCompat.getColor(requireContext(), R.color.text_main));
+        chart.animateY(1000);
+        chart.invalidate();
+
+        MaterialCardView btnClose = new MaterialCardView(requireContext());
+        btnClose.setRadius(32f);
+        btnClose.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.cacao_primary));
+        LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        btnParams.topMargin = 48;
+        btnClose.setLayoutParams(btnParams);
+        
+        TextView tvClose = new TextView(getContext());
+        tvClose.setText(R.string.btn_close);
+        tvClose.setTextColor(Color.WHITE);
+        tvClose.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvClose.setPadding(80, 24, 80, 24);
+        btnClose.addView(tvClose);
+        btnClose.setOnClickListener(v -> dialog.dismiss());
+
+        layout.addView(tvTitle);
+        layout.addView(chart);
+        layout.addView(btnClose);
+        
+        dialog.setContentView(layout);
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+        dialog.show();
     }
 
     private void loadHistory() {
@@ -131,7 +235,6 @@ public class HistoryFragment extends Fragment implements ScanHistoryAdapter.OnHi
                         Date d2 = sdf.parse(o2.date);
                         if (d1 != null && d2 != null) return d1.compareTo(d2);
                     } catch (ParseException e) {
-                        // Fallback to simpler format if needed
                         try {
                             SimpleDateFormat sdfShort = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
                             Date d1 = sdfShort.parse(o1.date);
@@ -147,9 +250,9 @@ public class HistoryFragment extends Fragment implements ScanHistoryAdapter.OnHi
         }
 
         if (isAscending) {
-            Collections.sort(historyList, comparator);
+            historyList.sort(comparator);
         } else {
-            Collections.sort(historyList, Collections.reverseOrder(comparator));
+            historyList.sort(Collections.reverseOrder(comparator));
         }
 
         adapter.setHistoryList(historyList);
@@ -177,11 +280,15 @@ public class HistoryFragment extends Fragment implements ScanHistoryAdapter.OnHi
                 .setTitle("Delete Scan")
                 .setMessage("Are you sure you want to delete this scan from history?")
                 .setPositiveButton("Delete", (dialog, which) -> {
-                    // Delete the local file to save space
                     if (history.imagePath != null && history.imagePath.startsWith("file://")) {
                         try {
-                            File file = new File(Uri.parse(history.imagePath).getPath());
-                            if (file.exists()) file.delete();
+                            String path = Uri.parse(history.imagePath).getPath();
+                            if (path != null) {
+                                File file = new File(path);
+                                if (file.exists() && !file.delete()) {
+                                    android.util.Log.w("HistoryFragment", "Could not delete file: " + path);
+                                }
+                            }
                         } catch (Exception ignored) {}
                     }
                     AppDatabase.getDatabase(getContext()).scanHistoryDao().deleteById(history.id);
@@ -223,13 +330,12 @@ public class HistoryFragment extends Fragment implements ScanHistoryAdapter.OnHi
         imageView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         
-        // Safety for full image loading
         Bitmap bitmap = decodeSampledBitmapFromUri(Uri.parse(imagePath), 800, 800);
         if (bitmap != null) {
             imageView.setImageBitmap(bitmap);
         } else {
             imageView.setImageResource(android.R.drawable.ic_menu_report_image);
-            Toast.makeText(getContext(), "Could not load full image. It may be missing or corrupted.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Could not load full image.", Toast.LENGTH_SHORT).show();
         }
         
         imageCard.addView(imageView);
@@ -242,7 +348,7 @@ public class HistoryFragment extends Fragment implements ScanHistoryAdapter.OnHi
         btnClose.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.cacao_primary));
         
         TextView tvClose = new TextView(getContext());
-        tvClose.setText("CLOSE");
+        tvClose.setText(R.string.btn_close);
         tvClose.setPadding(64, 24, 64, 24);
         tvClose.setTextColor(Color.WHITE);
         tvClose.setTypeface(null, android.graphics.Typeface.BOLD);
@@ -285,9 +391,9 @@ public class HistoryFragment extends Fragment implements ScanHistoryAdapter.OnHi
         if (height > reqHeight || width > reqWidth) {
             final int halfHeight = height / 2;
             final int halfWidth = width / 2;
-            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+            do {
                 inSampleSize *= 2;
-            }
+            } while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth);
         }
         return inSampleSize;
     }

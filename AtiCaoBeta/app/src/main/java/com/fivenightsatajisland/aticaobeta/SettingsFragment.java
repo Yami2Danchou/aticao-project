@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 
 import com.fivenightsatajisland.aticaobeta.database.AppDatabase;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 public class SettingsFragment extends Fragment {
     @Override
@@ -30,6 +31,12 @@ public class SettingsFragment extends Fragment {
         view.findViewById(R.id.btn_theme_dark).setOnClickListener(v -> {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             prefs.edit().putInt("theme", AppCompatDelegate.MODE_NIGHT_YES).apply();
+        });
+
+        SwitchMaterial switchRecImages = view.findViewById(R.id.switch_rec_images);
+        switchRecImages.setChecked(prefs.getBoolean("show_rec_images", true));
+        switchRecImages.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefs.edit().putBoolean("show_rec_images", isChecked).apply();
         });
 
         view.findViewById(R.id.btn_about).setOnClickListener(v -> showAboutDialog());

@@ -7,14 +7,12 @@ import android.os.Bundle;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-
-import android.view.View;
+import androidx.core.os.LocaleListCompat;
 
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -23,11 +21,11 @@ import com.fivenightsatajisland.aticaobeta.databinding.ActivityMainBinding;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import androidx.appcompat.app.AlertDialog;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
-    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
@@ -81,7 +79,29 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+        if (id == R.id.action_language) {
+            showLanguageDialog();
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showLanguageDialog() {
+        String[] languages = {getString(R.string.lang_en), getString(R.string.lang_bis), getString(R.string.lang_tag)};
+        String[] langCodes = {"en", "ceb", "fil"};
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.select_language)
+                .setItems(languages, (dialog, which) -> {
+                    LocaleListCompat appLocales = LocaleListCompat.forLanguageTags(langCodes[which]);
+                    AppCompatDelegate.setApplicationLocales(appLocales);
+                    
+                    // Use a small delay to ensure the locale change is registered 
+                    // before recreating the activity to refresh all fragments
+                    getWindow().getDecorView().postDelayed(this::recreate, 100);
+                })
+                .show();
     }
 //camera test
     @Override

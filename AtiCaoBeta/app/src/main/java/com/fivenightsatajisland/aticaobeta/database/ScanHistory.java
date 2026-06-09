@@ -8,17 +8,28 @@ public class ScanHistory {
     @PrimaryKey(autoGenerate = true)
     public int id;
 
-    public String result;
+    public String result; // Primary result (usually Alpha or user selected)
     public float confidence;
     public String date;
     public String imagePath;
-    public String severity; // Added severity
+    public String severity;
 
-    public ScanHistory(String result, float confidence, String date, String imagePath, String severity) {
+    // Comparison fields
+    public float confidenceAlpha;
+    public float confidenceBeta;
+    public String resultAlpha;
+    public String resultBeta;
+
+    public ScanHistory(String result, float confidence, String date, String imagePath, String severity, 
+                       float confidenceAlpha, float confidenceBeta, String resultAlpha, String resultBeta) {
         this.result = result;
         this.confidence = confidence;
         this.date = date;
         this.imagePath = imagePath;
         this.severity = severity;
+        this.confidenceAlpha = confidenceAlpha;
+        this.confidenceBeta = confidenceBeta;
+        this.resultAlpha = resultAlpha;
+        this.resultBeta = resultBeta;
     }
 }

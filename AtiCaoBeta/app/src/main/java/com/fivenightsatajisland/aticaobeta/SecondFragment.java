@@ -1,9 +1,12 @@
 package com.fivenightsatajisland.aticaobeta;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.ImageDecoder;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +15,8 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -19,8 +24,10 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.core.widget.TextViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.exifinterface.media.ExifInterface;
 
 import com.fivenightsatajisland.aticaobeta.database.AppDatabase;
 import com.fivenightsatajisland.aticaobeta.database.ScanHistory;
@@ -33,13 +40,16 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 
 public class SecondFragment extends Fragment {
 
     private FragmentSecondBinding binding;
     private Uri photoUri;
-    private CacaoClassifier classifier;
+    private CacaoClassifier classifierAlpha;
+    private CacaoClassifier classifierBeta;
+    private CacaoClassifier.Recognition resultAlpha;
+    private CacaoClassifier.Recognition resultBeta;
+    private String currentImagePath;
 
     private final ActivityResultLauncher<String> galleryLauncher = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
@@ -79,9 +89,10 @@ public class SecondFragment extends Fragment {
     ) {
         binding = FragmentSecondBinding.inflate(inflater, container, false);
         try {
-            classifier = new CacaoClassifier(requireContext());
+            classifierAlpha = new CacaoClassifier(requireContext(), "aticao_severity_alpha.tflite", "labels_severity_alpha.txt");
+            classifierBeta = new CacaoClassifier(requireContext(), "aticao_severity_beta.tflite", "labels_severity_beta.txt");
         } catch (IOException e) {
-            Toast.makeText(getContext(), "Error initializing classifier", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Error initializing classifiers", Toast.LENGTH_SHORT).show();
         }
         return binding.getRoot();
     }
@@ -96,6 +107,12 @@ public class SecondFragment extends Fragment {
                 openCamera();
             } else {
                 requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+            }
+        });
+
+        binding.toggleModel.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (isChecked) {
+                updateUI();
             }
         });
 
@@ -127,24 +144,54 @@ public class SecondFragment extends Fragment {
         try {
             Bitmap bitmap;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(requireContext().getContentResolver(), uri));
+                ImageDecoder.Source source = ImageDecoder.createSource(requireContext().getContentResolver(), uri);
+                bitmap = ImageDecoder.decodeBitmap(source, (decoder, info, src) -> decoder.setMutableRequired(true));
             } else {
                 bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), uri);
             }
-            // Need to make sure bitmap is ARGB_8888 for TFLite
+            
+            // Fix orientation
+            bitmap = rotateImageIfRequired(bitmap, uri);
             bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
             
-            if (classifier != null) {
-                CacaoClassifier.Recognition result = classifier.classify(bitmap);
+            if (classifierAlpha != null && classifierBeta != null) {
+                resultAlpha = classifierAlpha.classify(bitmap);
+                resultBeta = classifierBeta.classify(bitmap);
                 
-                // Save a permanent copy of the image for history
-                String permanentPath = saveImageToInternalStorage(uri);
-                
-                updateUIWithResult(result.title, result.confidence, permanentPath);
+                currentImagePath = saveImageToInternalStorage(uri);
+                saveToHistory();
+                updateUI();
             }
         } catch (IOException e) {
             Toast.makeText(getContext(), "Error processing image", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private Bitmap rotateImageIfRequired(Bitmap img, Uri selectedImage) throws IOException {
+        try (InputStream input = requireContext().getContentResolver().openInputStream(selectedImage)) {
+            if (input == null) return img;
+            ExifInterface ei = new ExifInterface(input);
+            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return rotateImage(img, 90);
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return rotateImage(img, 180);
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return rotateImage(img, 270);
+                default:
+                    return img;
+            }
+        }
+    }
+
+    private static Bitmap rotateImage(Bitmap img, int degree) {
+        android.graphics.Matrix matrix = new android.graphics.Matrix();
+        matrix.postRotate(degree);
+        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+        img.recycle();
+        return rotatedImg;
     }
 
     private String saveImageToInternalStorage(Uri uri) {
@@ -168,94 +215,186 @@ public class SecondFragment extends Fragment {
             
             return Uri.fromFile(file).toString();
         } catch (Exception e) {
-            e.printStackTrace();
             return uri.toString();
         }
     }
 
-    private void updateUIWithResult(String rawResult, float confidence, String imagePath) {
-        String result = formatResult(rawResult);
-        binding.tvResult.setText(result);
-        binding.tvConfidence.setText(String.format(Locale.getDefault(), "Confidence: %.2f%%", confidence));
+    private void updateUI() {
+        if (resultAlpha == null || resultBeta == null) return;
+
+        boolean isAlpha = binding.toggleModel.getCheckedButtonId() == R.id.btn_alpha;
+        CacaoClassifier.Recognition currentResult = isAlpha ? resultAlpha : resultBeta;
+
+        String formattedResult = formatResult(currentResult.title);
+        String modelName = isAlpha ? getString(R.string.alpha_model_label) : getString(R.string.beta_model_label);
+        
+        binding.tvResult.setText(formattedResult);
+        binding.tvConfidence.setText(String.format(Locale.getDefault(), "%s Confidence: %.2f%%", modelName, currentResult.confidence));
         
         binding.tvRecommendationLabel.setVisibility(View.VISIBLE);
         binding.tvRecommendation.setVisibility(View.VISIBLE);
         
-        StringBuilder recommendation = new StringBuilder();
-        int colorRes = R.color.text_secondary;
+        showRecommendation(currentResult.title);
+    }
 
-        if (rawResult.contains("Black Pod Rot")) {
+    private void showRecommendation(String rawResult) {
+        String lowerResult = rawResult.toLowerCase();
+        int colorRes = R.color.text_secondary;
+        int iconRes = 0;
+        
+        String goal = null;
+        String[] items = null;
+        String footer = null;
+        String folderPath = null;
+
+        if (lowerResult.contains("black pod rot")) {
             colorRes = R.color.pod_danger;
-            if (rawResult.contains("Mild")) {
-                recommendation.append("<b>Severity: Mild</b><br><br>")
-                        .append("1. <b>Identify & Remove:</b> Immediately pick infected pods from the tree.<br>")
-                        .append("2. <b>Disposal:</b> Bury infected pods at least 50cm deep or burn them. Do not leave them on the ground.<br>")
-                        .append("3. <b>Pruning:</b> Lightly prune branches to improve airflow and reduce humidity.");
-            } else if (rawResult.contains("Moderate")) {
-                recommendation.append("<b>Severity: Moderate</b><br><br>")
-                        .append("1. <b>Sanitation:</b> Remove and bury all infected pods immediately.<br>")
-                        .append("2. <b>Thinning:</b> Prune the canopy to allow 50-70% sunlight penetration.<br>")
-                        .append("3. <b>Fungicide:</b> Apply copper-based fungicides (e.g., Bordeaux mixture) every 2-4 weeks during rainy periods.");
-            } else if (rawResult.contains("Severe")) {
-                recommendation.append("<b>Severity: Severe</b><br><br>")
-                        .append("1. <b>Intensive Pruning:</b> Heavy pruning of the tree and surrounding shade trees to maximize sunlight.<br>")
-                        .append("2. <b>Systemic Fungicide:</b> Use systematic fungicide applications as recommended by local agricultural offices.<br>")
-                        .append("3. <b>Drainage:</b> Improve field drainage to prevent waterlogging around the tree base.<br>")
-                        .append("4. <b>Monitoring:</b> Inspect the farm every 3 days to catch new infections.");
+            if (lowerResult.contains("mild")) {
+                iconRes = R.drawable.ic_mild;
+                goal = getString(R.string.goal_bpr_mild);
+                items = getResources().getStringArray(R.array.items_bpr_mild);
+                footer = getString(R.string.rec_bpr_mild_footer);
+                folderPath = "images/Black Pod Rot/Mild";
+            } else if (lowerResult.contains("moderate")) {
+                iconRes = R.drawable.ic_moderate;
+                goal = getString(R.string.goal_bpr_mod);
+                items = getResources().getStringArray(R.array.items_bpr_mod);
+                footer = getString(R.string.rec_bpr_mod_footer);
+                folderPath = "images/Black Pod Rot/Moderate";
+            } else if (lowerResult.contains("severe")) {
+                iconRes = R.drawable.ic_severe;
+                goal = getString(R.string.goal_bpr_sev);
+                items = getResources().getStringArray(R.array.items_bpr_sev);
+                footer = getString(R.string.rec_bpr_sev_footer);
+                folderPath = "images/Black Pod Rot/Severe";
             }
-        } else if (rawResult.contains("Pod Borer")) {
+        } else if (lowerResult.contains("pod borer")) {
             colorRes = R.color.pod_warning;
-            if (rawResult.contains("Mild")) {
-                recommendation.append("<b>Severity: Mild</b><br><br>")
-                        .append("1. <b>Rampasan:</b> Harvest all pods (ripe and near-ripe) to break the pest life cycle.<br>")
-                        .append("2. <b>Pruning:</b> Maintain a low canopy height (3-4m) for easier pest management.");
-            } else if (rawResult.contains("Moderate")) {
-                recommendation.append("<b>Severity: Moderate</b><br><br>")
-                        .append("1. <b>Pod Sleeving:</b> Wrap young pods (6-7cm) with transparent plastic bags to prevent egg-laying.<br>")
-                        .append("2. <b>Weekly Harvest:</b> Harvest every 7 days to remove pods before larvae can emerge.<br>")
-                        .append("3. <b>Husk Disposal:</b> Break open husks and bury them immediately after harvest.");
-            } else if (rawResult.contains("Severe")) {
-                recommendation.append("<b>Severity: Severe</b><br><br>")
-                        .append("1. <b>IPM Strategy:</b> Combine rampasan, pruning, sleeving, and balanced fertilization.<br>")
-                        .append("2. <b>Biological Control:</b> Introduce natural predators like black ants (Dolichoderus thoracicus) if possible.<br>")
-                        .append("3. <b>Pheromone Traps:</b> Use pheromone traps to monitor and reduce adult moth populations.");
+            if (lowerResult.contains("mild")) {
+                iconRes = R.drawable.ic_mild;
+                goal = getString(R.string.goal_cpb_mild);
+                items = getResources().getStringArray(R.array.items_cpb_mild);
+                footer = getString(R.string.rec_cpb_mild_footer);
+                folderPath = "images/Pod Boarer/Mild";
+            } else if (lowerResult.contains("moderate")) {
+                iconRes = R.drawable.ic_moderate;
+                goal = getString(R.string.goal_cpb_mod);
+                items = getResources().getStringArray(R.array.items_cpb_mod);
+                footer = getString(R.string.rec_cpb_mod_footer);
+                folderPath = "images/Pod Boarer/Moderate";
+            } else if (lowerResult.contains("severe")) {
+                iconRes = R.drawable.ic_severe;
+                goal = getString(R.string.goal_cpb_sev);
+                items = getResources().getStringArray(R.array.items_cpb_sev);
+                footer = getString(R.string.rec_cpb_sev_footer);
+                folderPath = "images/Pod Boarer/Severe";
             }
-        } else if (rawResult.contains("Healthy")) {
+        } else if (lowerResult.contains("healthy")) {
             colorRes = R.color.pod_healthy;
-            recommendation.append("<b>Your cacao pod appears healthy!</b><br><br>")
-                    .append("• Continue regular monitoring every 2 weeks.<br>")
-                    .append("• Maintain good farm sanitation and remove any fallen pods.<br>")
-                    .append("• Ensure balanced fertilization to boost tree immunity.");
-        } else {
-            recommendation.append("• No cacao pod detected or image is unclear.<br>")
-                    .append("• Please ensure the cacao pod is centered and well-lit.<br>")
-                    .append("• Try taking the photo from a different angle.");
         }
 
-        binding.tvRecommendation.setText(android.text.Html.fromHtml(recommendation.toString(), android.text.Html.FROM_HTML_MODE_LEGACY));
-        binding.tvResult.setTextColor(getResources().getColor(colorRes, null));
+        binding.layoutRecImages.removeAllViews();
+        binding.tvResult.setTextColor(ContextCompat.getColor(requireContext(), colorRes));
 
-        // Determine severity for history
+        if (goal != null) {
+            String severity = "";
+            if (lowerResult.contains("mild")) severity = getString(R.string.severity_mild);
+            else if (lowerResult.contains("moderate")) severity = getString(R.string.severity_moderate);
+            else if (lowerResult.contains("severe")) severity = getString(R.string.severity_severe);
+
+            String header = severity + "<br><br><b>Goal:</b> " + goal;
+            binding.tvRecommendation.setText(android.text.Html.fromHtml(header, android.text.Html.FROM_HTML_MODE_LEGACY));
+
+            SharedPreferences prefs = requireActivity().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+            boolean showImages = prefs.getBoolean("show_rec_images", true);
+
+            try {
+                String[] assetFiles = showImages ? requireContext().getAssets().list(folderPath) : null;
+                for (int i = 0; i < items.length; i++) {
+                    // Add Text for the line
+                    android.widget.TextView itemTv = new android.widget.TextView(requireContext());
+                    String itemText = "• " + items[i];
+                    itemTv.setText(android.text.Html.fromHtml(itemText, android.text.Html.FROM_HTML_MODE_LEGACY));
+                    itemTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_main));
+                    itemTv.setPadding(0, 8, 0, 8);
+                    binding.layoutRecImages.addView(itemTv);
+
+                    // Add corresponding Image if available and enabled
+                    if (showImages && assetFiles != null && i < assetFiles.length) {
+                        ImageView iv = new ImageView(requireContext());
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT, 600);
+                        params.setMargins(0, 8, 0, 16);
+                        iv.setLayoutParams(params);
+                        iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                        try (InputStream is = requireContext().getAssets().open(folderPath + "/" + assetFiles[i])) {
+                            Drawable d = Drawable.createFromStream(is, null);
+                            iv.setImageDrawable(d);
+                            binding.layoutRecImages.addView(iv);
+                        } catch (IOException ignored) {}
+                    }
+                }
+            } catch (IOException e) {
+                // Fallback if assets fail
+                for (String item : items) {
+                    android.widget.TextView itemTv = new android.widget.TextView(requireContext());
+                    String itemText = "• " + item;
+                    itemTv.setText(itemText);
+                    itemTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_main));
+                    binding.layoutRecImages.addView(itemTv);
+                }
+            }
+
+            if (footer != null) {
+                android.widget.TextView footerTv = new android.widget.TextView(requireContext());
+                String footerText = "<br><b>Recommendation:</b> " + footer;
+                footerTv.setText(android.text.Html.fromHtml(footerText, android.text.Html.FROM_HTML_MODE_LEGACY));
+                footerTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_main));
+                binding.layoutRecImages.addView(footerTv);
+            }
+            binding.layoutRecImages.setVisibility(View.VISIBLE);
+        } else if (lowerResult.contains("healthy")) {
+            binding.tvRecommendation.setText(android.text.Html.fromHtml(getString(R.string.rec_healthy_msg), android.text.Html.FROM_HTML_MODE_LEGACY));
+            binding.layoutRecImages.setVisibility(View.GONE);
+            iconRes = R.drawable.ic_healthy;
+        } else {
+            binding.tvRecommendation.setText(android.text.Html.fromHtml(getString(R.string.rec_unknown_msg), android.text.Html.FROM_HTML_MODE_LEGACY));
+            binding.layoutRecImages.setVisibility(View.GONE);
+        }
+
+        if (iconRes != 0) {
+            binding.tvResult.setCompoundDrawablesWithIntrinsicBounds(iconRes, 0, 0, 0);
+            TextViewCompat.setCompoundDrawableTintList(binding.tvResult, 
+                    android.content.res.ColorStateList.valueOf(ContextCompat.getColor(requireContext(), colorRes)));
+        } else {
+            binding.tvResult.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+        }
+    }
+
+    private void saveToHistory() {
+        String primaryResult = formatResult(resultAlpha.title);
         String severity = "N/A";
-        if (rawResult.contains("Mild")) severity = "Mild";
-        else if (rawResult.contains("Moderate")) severity = "Moderate";
-        else if (rawResult.contains("Severe")) severity = "Severe";
-        else if (rawResult.contains("Healthy")) severity = "Healthy";
+        String lowerAlpha = resultAlpha.title.toLowerCase();
+        
+        if (lowerAlpha.contains("mild")) severity = "Mild";
+        else if (lowerAlpha.contains("moderate")) severity = "Moderate";
+        else if (lowerAlpha.contains("severe")) severity = "Severe";
+        else if (lowerAlpha.contains("healthy")) severity = "Healthy";
 
-        // Save to history
         String date = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
+        
         AppDatabase.getDatabase(getContext()).scanHistoryDao().insert(
-                new ScanHistory(result, confidence, date, imagePath, severity)
+                new ScanHistory(primaryResult, resultAlpha.confidence, date, currentImagePath, severity,
+                        resultAlpha.confidence, resultBeta.confidence, resultAlpha.title, resultBeta.title)
         );
     }
 
     private String formatResult(String raw) {
         String clean = raw.replaceAll("^\\d+:", "").replace("_", " ");
-        // Capitalize first letters
         StringBuilder result = new StringBuilder();
         String[] words = clean.split(" ");
         for (String word : words) {
-            if (word.length() > 0) {
+            if (!word.isEmpty()) {
                 result.append(Character.toUpperCase(word.charAt(0)))
                       .append(word.substring(1))
                       .append(" ");
@@ -267,9 +406,8 @@ public class SecondFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (classifier != null) {
-            classifier.close();
-        }
+        if (classifierAlpha != null) classifierAlpha.close();
+        if (classifierBeta != null) classifierBeta.close();
         binding = null;
     }
 }
