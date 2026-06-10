@@ -57,8 +57,8 @@
     <string name="placeholder_result">Naghihintay ng imahe…</string>
     <string name="btn_capture">Kumuha ng Larawan</string>
     <string name="btn_gallery">Galerya</string>
-    <string name="btn_alpha">MODELONG ALPHA</string>
-    <string name="btn_beta">MODELONG BETA</string>
+    <string name="btn_alpha">ESTANDARD NA MODELO</string>
+    <string name="btn_beta">ENHANCED NA MODELO</string>
 
     <string name="severity_mild"><![CDATA[<b>Tindi: Bahagya (Mild)</b>]]></string>
     <string name="severity_moderate"><![CDATA[<b>Tindi: Katamtaman (Moderate)</b>]]></string>
@@ -141,4 +141,25 @@
     <string name="temperature_label">Temperatura</string>
     <string name="humidity_label">Humidity</string>
     <string name="soil_moisture_status">Katayuan ng Halumigmig ng Lupa</string>
+
+    <string name="alpha_model_label">Estandard na Modelo</string>
+    <string name="beta_model_label">Enhanced na Modelo</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">Maligayang pagdating sa AtiCao!</string>
+    <string name="onboarding_welcome_msg">Ang AtiCao ay tumutulong sa iyo na suriin ang mga sakit sa cacao gamit ang AI at i-monitor ang kondisyon ng iyong bukid. Tayo na at mag-tour.</string>
+    <string name="onboarding_scan_title">Pagsusuri ng Sakit</string>
+    <string name="onboarding_scan_msg">Gamitin ang iyong camera upang i-scan ang mga bunga ng cacao. Pumili sa pagitan ng Estandard at Enhanced na mga modelo para sa mas tumpak na resulta.</string>
+    <string name="onboarding_monitoring_title">Pag-monitor ng Kapaligiran</string>
+    <string name="onboarding_monitoring_msg">Kumonekta sa AtiCao ESP32 device upang masubaybayan ang temperatura, humidity, at moisture ng lupa sa iyong bukid.</string>
+    <string name="onboarding_history_title">Kasaysayan at Trends</string>
+    <string name="onboarding_history_msg">Suriin ang iyong mga nakaraang scan at trends ng kapaligiran upang makagawa ng tamang desisyon para sa iyong bukid.</string>
+    <string name="onboarding_finish">Simulan Na</string>
+
+    <!-- Image Quality Validation -->
+    <string name="quality_warning_title">Mababang Kalidad ng Larawan</string>
+    <string name="warning_too_dark">Masyadong madilim ang larawan. Siguraduhing may sapat na liwanag.</string>
+    <string name="warning_too_bright">Masyadong maliwanag ang larawan. Iwasan ang direktang silaw sa bunga.</string>
+    <string name="quality_warning_suggestion">Ang mababang kalidad ng larawan ay maaaring magdulot ng maling resulta. Gusto mo bang subukan muli na may mas maayos na liwanag?</string>
+    <string name="btn_continue_anyway">Ituloy Pa Rin</string>
 </resources>

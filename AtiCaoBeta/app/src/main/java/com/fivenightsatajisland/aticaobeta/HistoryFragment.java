@@ -26,6 +26,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fivenightsatajisland.aticaobeta.database.AppDatabase;
 import com.fivenightsatajisland.aticaobeta.database.ScanHistory;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -45,7 +47,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class HistoryFragment extends Fragment implements ScanHistoryAdapter.OnHistoryItemClickListener {
+public class HistoryFragment extends Fragment implements ScanHistoryAdapter.OnHistoryItemClickListener, TutorialHandler {
 
     private ScanHistoryAdapter adapter;
     private List<ScanHistory> historyList;
@@ -76,6 +78,32 @@ public class HistoryFragment extends Fragment implements ScanHistoryAdapter.OnHi
 
         setupSorting(view);
         loadHistory();
+    }
+
+    @Override
+    public void showTutorial() {
+        new TapTargetSequence(requireActivity())
+                .targets(
+                        TapTarget.forView(rvHistory.findViewById(R.id.chip_time), getString(R.string.tut_sort_time_title), getString(R.string.tut_sort_time_desc))
+                                .outerCircleColor(R.color.cacao_primary)
+                                .targetCircleColor(R.color.white)
+                                .transparentTarget(true)
+                                .tintTarget(true)
+                                .targetRadius(30),
+                        TapTarget.forView(ivSortOrder, getString(R.string.tut_sort_order_title), getString(R.string.tut_sort_order_desc))
+                                .outerCircleColor(R.color.cacao_accent)
+                                .targetCircleColor(R.color.white)
+                                .transparentTarget(true)
+                                .tintTarget(true)
+                                .targetRadius(30),
+                        TapTarget.forView(ivCompareGraph, getString(R.string.tut_compare_title), getString(R.string.tut_compare_desc))
+                                .outerCircleColor(R.color.cacao_primary)
+                                .targetCircleColor(R.color.white)
+                                .transparentTarget(true)
+                                .tintTarget(true)
+                                .targetRadius(30)
+                )
+                .start();
     }
 
     private void setupSorting(View view) {

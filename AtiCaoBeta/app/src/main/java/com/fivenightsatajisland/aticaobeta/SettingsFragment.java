@@ -14,9 +14,11 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 
 import com.fivenightsatajisland.aticaobeta.database.AppDatabase;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends Fragment implements TutorialHandler {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
@@ -67,6 +69,33 @@ public class SettingsFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void showTutorial() {
+        if (getView() == null) return;
+        new TapTargetSequence(requireActivity())
+                .targets(
+                        TapTarget.forView(getView().findViewById(R.id.btn_theme_light), getString(R.string.tut_appearance_title), getString(R.string.tut_appearance_desc))
+                                .outerCircleColor(R.color.cacao_primary)
+                                .targetCircleColor(R.color.white)
+                                .transparentTarget(true)
+                                .tintTarget(true)
+                                .targetRadius(40),
+                        TapTarget.forView(getView().findViewById(R.id.switch_rec_images), getString(R.string.tut_rec_images_title), getString(R.string.tut_rec_images_desc))
+                                .outerCircleColor(R.color.cacao_accent)
+                                .targetCircleColor(R.color.white)
+                                .transparentTarget(true)
+                                .tintTarget(true)
+                                .targetRadius(40),
+                        TapTarget.forView(getView().findViewById(R.id.btn_clear_history), getString(R.string.tut_data_mgmt_title), getString(R.string.tut_data_mgmt_desc))
+                                .outerCircleColor(R.color.cacao_primary)
+                                .targetCircleColor(R.color.white)
+                                .transparentTarget(true)
+                                .tintTarget(true)
+                                .targetRadius(40)
+                )
+                .start();
     }
 
     private void showAboutDialog() {

@@ -15,8 +15,10 @@ litertSupport = "1.4.2"
 retrofit = "2.9.0"
 gson = "2.10.1"
 exifinterface = "1.3.6"
+taptargetview = "1.13.3"
 
 [libraries]
+taptargetview = { group = "com.getkeepsafe.taptargetview", name = "taptargetview", version.ref = "taptargetview" }
 exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

@@ -34,6 +34,8 @@ import com.fivenightsatajisland.aticaobeta.database.AppDatabase;
 import com.fivenightsatajisland.aticaobeta.database.ScanHistory;
 import com.fivenightsatajisland.aticaobeta.databinding.FragmentSecondBinding;
 import com.fivenightsatajisland.aticaobeta.tflite.CacaoClassifier;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +45,7 @@ import java.util.Date;
 import java.util.Locale;
 import android.speech.tts.TextToSpeech;
 
-public class SecondFragment extends Fragment {
+public class SecondFragment extends Fragment implements TutorialHandler {
     private TextToSpeech tts;
 
     private FragmentSecondBinding binding;
@@ -145,6 +147,32 @@ public class SecondFragment extends Fragment {
         );
     }
 
+    @Override
+    public void showTutorial() {
+        new TapTargetSequence(requireActivity())
+                .targets(
+                        TapTarget.forView(binding.btnCapture, getString(R.string.tut_camera_title), getString(R.string.tut_camera_desc))
+                                .outerCircleColor(R.color.cacao_primary)
+                                .targetCircleColor(R.color.white)
+                                .transparentTarget(true)
+                                .tintTarget(true)
+                                .targetRadius(40),
+                        TapTarget.forView(binding.btnGallery, getString(R.string.tut_gallery_title), getString(R.string.tut_gallery_desc))
+                                .outerCircleColor(R.color.cacao_accent)
+                                .targetCircleColor(R.color.white)
+                                .transparentTarget(true)
+                                .tintTarget(true)
+                                .targetRadius(40),
+                        TapTarget.forView(binding.toggleModel, getString(R.string.tut_model_toggle_title), getString(R.string.tut_model_toggle_desc))
+                                .outerCircleColor(R.color.cacao_primary)
+                                .targetCircleColor(R.color.white)
+                                .transparentTarget(true)
+                                .tintTarget(true)
+                                .targetRadius(50)
+                )
+                .start();
+    }
+
     private void showScanTips() {
         String tips = getString(R.string.scan_tip_1) + "<br>" +
                 getString(R.string.scan_tip_2) + "<br>" +
@@ -195,17 +223,38 @@ public class SecondFragment extends Fragment {
             // Fix orientation
             Bitmap rotatedBitmap = rotateImageIfRequired(rawBitmap, uri);
             Bitmap bitmap = rotatedBitmap.copy(Bitmap.Config.ARGB_8888, true);
-            
-            if (classifierAlpha != null && classifierBeta != null) {
-                resultAlpha = classifierAlpha.classify(bitmap);
-                resultBeta = classifierBeta.classify(bitmap);
-                
-                currentImagePath = saveImageToInternalStorage(uri);
-                saveToHistory();
-                updateUI();
+
+            if (validateImageQuality(bitmap, uri)) {
+                performClassification(uri, bitmap);
             }
         } catch (IOException e) {
             Toast.makeText(getContext(), "Error processing image", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void performClassification(Uri uri, Bitmap bitmap) {
+        if (classifierAlpha != null && classifierBeta != null) {
+            if (bitmap == null) {
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        ImageDecoder.Source source = ImageDecoder.createSource(requireContext().getContentResolver(), uri);
+                        bitmap = ImageDecoder.decodeBitmap(source, (decoder, info, src) -> decoder.setMutableRequired(true));
+                    } else {
+                        bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), uri);
+                    }
+                    bitmap = rotateImageIfRequired(bitmap, uri);
+                } catch (IOException e) {
+                    Toast.makeText(getContext(), "Error reloading image", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
+            resultAlpha = classifierAlpha.classify(bitmap);
+            resultBeta = classifierBeta.classify(bitmap);
+
+            currentImagePath = saveImageToInternalStorage(uri);
+            saveToHistory();
+            updateUI();
         }
     }
 
@@ -234,6 +283,51 @@ public class SecondFragment extends Fragment {
         Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
         img.recycle();
         return rotatedImg;
+    }
+
+    private boolean validateImageQuality(Bitmap bitmap, Uri uri) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        
+        // Sampling for performance
+        int step = 10; 
+        long totalBrightness = 0;
+        int count = 0;
+        
+        for (int y = 0; y < height; y += step) {
+            for (int x = 0; x < width; x += step) {
+                int pixel = bitmap.getPixel(x, y);
+                int r = (pixel >> 16) & 0xff;
+                int g = (pixel >> 8) & 0xff;
+                int b = pixel & 0xff;
+                
+                // Using relative luminance formula
+                totalBrightness += (long) (0.299 * r + 0.587 * g + 0.114 * b);
+                count++;
+            }
+        }
+        
+        double avgBrightness = (double) totalBrightness / count;
+        
+        if (avgBrightness < 40) {
+            showQualityWarning(getString(R.string.warning_too_dark), uri, bitmap);
+            return false;
+        } else if (avgBrightness > 230) {
+            showQualityWarning(getString(R.string.warning_too_bright), uri, bitmap);
+            return false;
+        }
+        
+        return true;
+    }
+
+    private void showQualityWarning(String message, Uri uri, Bitmap bitmap) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.quality_warning_title)
+                .setMessage(message + "\n\n" + getString(R.string.quality_warning_suggestion))
+                .setPositiveButton(R.string.retry, (dialog, which) -> showScanTips())
+                .setNeutralButton(R.string.btn_continue_anyway, (dialog, which) -> performClassification(uri, bitmap))
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 
     private String saveImageToInternalStorage(Uri uri) {

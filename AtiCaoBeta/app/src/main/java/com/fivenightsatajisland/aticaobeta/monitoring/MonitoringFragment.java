@@ -18,7 +18,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.fivenightsatajisland.aticaobeta.R;
+import com.fivenightsatajisland.aticaobeta.TutorialHandler;
 import com.fivenightsatajisland.aticaobeta.databinding.FragmentMonitoringBinding;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanner;
@@ -36,7 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class MonitoringFragment extends Fragment {
+public class MonitoringFragment extends Fragment implements TutorialHandler {
 
     private FragmentMonitoringBinding binding;
     private MonitoringViewModel viewModel;
@@ -277,6 +280,38 @@ public class MonitoringFragment extends Fragment {
 
         String currentTime = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
         binding.tvLastUpdate.setText(getString(R.string.last_reading, currentTime));
+    }
+
+    @Override
+    public void showTutorial() {
+        new TapTargetSequence(requireActivity())
+                .targets(
+                        TapTarget.forView(binding.tvTemperature, getString(R.string.tut_env_temp_title), getString(R.string.tut_env_temp_desc))
+                                .outerCircleColor(R.color.cacao_primary)
+                                .targetCircleColor(R.color.white)
+                                .transparentTarget(true)
+                                .tintTarget(true)
+                                .targetRadius(60),
+                        TapTarget.forView(binding.tvSoilStatus, getString(R.string.tut_soil_moisture_title), getString(R.string.tut_soil_moisture_desc))
+                                .outerCircleColor(R.color.cacao_accent)
+                                .targetCircleColor(R.color.white)
+                                .transparentTarget(true)
+                                .tintTarget(true)
+                                .targetRadius(60),
+                        TapTarget.forView(binding.btnScanQr, getString(R.string.tut_wifi_config_title), getString(R.string.tut_wifi_config_desc))
+                                .outerCircleColor(R.color.cacao_primary)
+                                .targetCircleColor(R.color.white)
+                                .transparentTarget(true)
+                                .tintTarget(true)
+                                .targetRadius(40),
+                        TapTarget.forView(binding.sensorChart, getString(R.string.tut_chart_trends_title), getString(R.string.tut_chart_trends_desc))
+                                .outerCircleColor(R.color.cacao_accent)
+                                .targetCircleColor(R.color.white)
+                                .transparentTarget(true)
+                                .tintTarget(true)
+                                .targetRadius(80)
+                )
+                .start();
     }
 
     @Override

@@ -57,8 +57,8 @@
     <string name="placeholder_result">Naghulat og hulagway…</string>
     <string name="btn_capture">Kuha og Hulagway</string>
     <string name="btn_gallery">Galeriya</string>
-    <string name="btn_alpha">MODELONG ALPHA</string>
-    <string name="btn_beta">MODELONG BETA</string>
+    <string name="btn_alpha">ESTANDARD NGA MODELO</string>
+    <string name="btn_beta">ENHANCED NGA MODELO</string>
 
     <string name="severity_mild"><![CDATA[<b>Grabe: Hamis (Mild)</b>]]></string>
     <string name="severity_moderate"><![CDATA[<b>Grabe: Sakto-sakto (Moderate)</b>]]></string>
@@ -141,4 +141,25 @@
     <string name="temperature_label">Temperatura</string>
     <string name="humidity_label">Kabulahong (Humidity)</string>
     <string name="soil_moisture_status">Status sa Kabugnaw sa Yuta</string>
+
+    <string name="alpha_model_label">Estandard nga Modelo</string>
+    <string name="beta_model_label">Enhanced nga Modelo</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">Maayong pag-abot sa AtiCao!</string>
+    <string name="onboarding_welcome_msg">Ang AtiCao nagtabang kanimo sa pagsusi sa mga sakit sa cacao gamit ang AI ug pag-monitor sa kondisyon sa imong umahan. Mag-tour ta kadiyot.</string>
+    <string name="onboarding_scan_title">Pagsusi sa Sakit</string>
+    <string name="onboarding_scan_msg">Gamita ang imong camera sa pag-scan sa mga bunga sa cacao. Pagpili tali sa Estandard ug Enhanced nga mga modelo para sa mas saktong resulta.</string>
+    <string name="onboarding_monitoring_title">Pag-monitor sa Kalikopan</string>
+    <string name="onboarding_monitoring_msg">Sumpay sa AtiCao ESP32 device aron masubay ang temperatura, humidity, ug kaumog sa yuta sa imong umahan.</string>
+    <string name="onboarding_history_title">Kaagi ug Trends</string>
+    <string name="onboarding_history_msg">Ribyuha ang imong mga nangaging scan ug trends sa kalikopan aron makahimo og husto nga desisyon para sa imong umahan.</string>
+    <string name="onboarding_finish">Sugdi Na</string>
+
+    <!-- Image Quality Validation -->
+    <string name="quality_warning_title">Ubos nga Kalidad sa Hulagway</string>
+    <string name="warning_too_dark">Ngitngit ra kaayo ang hulagway. Siguroha nga naay saktong kahayag.</string>
+    <string name="warning_too_bright">Hayag ra kaayo ang hulagway. Likayi ang direktang silaw sa bunga.</string>
+    <string name="quality_warning_suggestion">Ang ubos nga kalidad sa hulagway mahimong moresulta sa dili saktong pag-ila. Gusto ba nimo mosulay pag-usab sa mas maayong kahayag?</string>
+    <string name="btn_continue_anyway">Ipadayon Gihapon</string>
 </resources>

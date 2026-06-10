@@ -173,10 +173,10 @@
     <string name="compare_models_title">Model Confidence Comparison</string>
     <string name="compare_data_empty">No data for comparison</string>
     <string name="btn_close">CLOSE</string>
-    <string name="alpha_model_label">Alpha Model</string>
-    <string name="beta_model_label">Beta Model</string>
-    <string name="btn_alpha">ALPHA MODEL</string>
-    <string name="btn_beta">BETA MODEL</string>
+    <string name="alpha_model_label">Standard Model</string>
+    <string name="beta_model_label">Enhanced Model</string>
+    <string name="btn_alpha">STANDARD MODEL</string>
+    <string name="btn_beta">ENHANCED MODEL</string>
     <string name="scan_num_prefix">#</string>
 
     <string name="content_desc_pod">Cacao pod image</string>
@@ -206,4 +206,64 @@
     <string name="clear_history_title">Clear History</string>
     <string name="clear_history_message">Are you sure you want to delete all scan history?</string>
     <string name="history_cleared">History cleared</string>
+    <string name="action_tutorial">Tutorial</string>
+
+    <!-- Tutorial Strings -->
+    <string name="tut_disease_det_title">Disease Detection</string>
+    <string name="tut_disease_det_desc">Scan your cacao pods here to identify diseases.</string>
+    <string name="tut_monitoring_title">Real-time Monitoring</string>
+    <string name="tut_monitoring_desc">Check your farm\'s temperature and humidity here.</string>
+    <string name="tut_history_title">Scan History</string>
+    <string name="tut_history_desc">View all your previous scans and AI results.</string>
+
+    <string name="tut_camera_title">Camera Scan</string>
+    <string name="tut_camera_desc">Take a live photo of the cacao pod for analysis.</string>
+    <string name="tut_gallery_title">Import from Gallery</string>
+    <string name="tut_gallery_desc">Upload a previously taken photo from your phone.</string>
+    <string name="tut_model_toggle_title">AI Model Selection</string>
+    <string name="tut_model_toggle_desc">Switch between Standard and Enhanced models for better accuracy.</string>
+
+    <string name="tut_sort_time_title">Sort by Time</string>
+    <string name="tut_sort_time_desc">Organize your scans from newest to oldest.</string>
+    <string name="tut_sort_order_title">Toggle Order</string>
+    <string name="tut_sort_order_desc">Reverse the sorting order (Ascending/Descending).</string>
+    <string name="tut_compare_title">Model Comparison</string>
+    <string name="tut_compare_desc">View a graph comparing Standard and Enhanced model confidence scores.</string>
+
+    <string name="tut_env_temp_title">Temperature &amp; Humidity</string>
+    <string name="tut_env_temp_desc">Monitor current air conditions in your farm.</string>
+    <string name="tut_soil_moisture_title">Soil Moisture</string>
+    <string name="tut_soil_moisture_desc">Check if your cacao plants need more water.</string>
+    <string name="tut_wifi_config_title">WiFi Configuration</string>
+    <string name="tut_wifi_config_desc">Scan the QR code on your AtiCao device to connect easily.</string>
+    <string name="tut_chart_trends_title">Environmental Trends</string>
+    <string name="tut_chart_trends_desc">View historical sensor data visualized over time.</string>
+
+    <string name="tut_appearance_title">Appearance</string>
+    <string name="tut_appearance_desc">Switch between Light and Dark themes.</string>
+    <string name="tut_rec_images_title">Action Plan Images</string>
+    <string name="tut_rec_images_desc">Toggle whether to show recommendation images in scan results.</string>
+    <string name="tut_data_mgmt_title">Data Management</string>
+    <string name="tut_data_mgmt_desc">Clean up your scan or sensor history to free up space.</string>
+
+    <string name="tut_disease_lib_title">Disease Library</string>
+    <string name="tut_disease_lib_desc">Learn about symptoms and causes of different cacao diseases.</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">Welcome to AtiCao!</string>
+    <string name="onboarding_welcome_msg">AtiCao helps you detect cacao diseases using AI and monitor environmental conditions. Let\'s take a quick tour.</string>
+    <string name="onboarding_scan_title">Disease Detection</string>
+    <string name="onboarding_scan_msg">Use your camera to scan cacao pods for diseases like Black Pod Rot and Pod Borer. Choose between Standard and Enhanced models for better accuracy.</string>
+    <string name="onboarding_monitoring_title">Environmental Monitoring</string>
+    <string name="onboarding_monitoring_msg">Connect to an AtiCao ESP32 device to track temperature, humidity, and soil moisture in your farm.</string>
+    <string name="onboarding_history_title">History &amp; Trends</string>
+    <string name="onboarding_history_msg">Review your past scans and environmental trends to make informed decisions for your farm.</string>
+    <string name="onboarding_finish">Get Started</string>
+
+    <!-- Image Quality Validation -->
+    <string name="quality_warning_title">Low Image Quality</string>
+    <string name="warning_too_dark">The image is too dark. Please ensure there is enough light.</string>
+    <string name="warning_too_bright">The image is too bright. Avoid direct glare on the pod.</string>
+    <string name="quality_warning_suggestion">Poor image quality can lead to inaccurate results. Would you like to try again with better lighting?</string>
+    <string name="btn_continue_anyway">Continue Anyway</string>
 </resources>

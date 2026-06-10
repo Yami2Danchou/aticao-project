@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.play.services.code.scanner)
     implementation(libs.mpandroidchart)
+    implementation(libs.taptargetview)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)

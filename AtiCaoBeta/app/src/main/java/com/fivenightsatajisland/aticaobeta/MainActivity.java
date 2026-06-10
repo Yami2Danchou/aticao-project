@@ -17,6 +17,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.fragment.app.Fragment;
 import com.fivenightsatajisland.aticaobeta.databinding.ActivityMainBinding;
 
 import android.view.Menu;
@@ -71,6 +72,11 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
+        if (id == R.id.action_tutorial) {
+            triggerTutorial();
+            return true;
+        }
+
         if (id == R.id.action_settings) {
             NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_main);
             if (navHostFragment != null) {
@@ -85,6 +91,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void triggerTutorial() {
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_main);
+        if (navHostFragment != null) {
+            Fragment currentFragment = navHostFragment.getChildFragmentManager().getPrimaryNavigationFragment();
+            if (currentFragment instanceof TutorialHandler) {
+                ((TutorialHandler) currentFragment).showTutorial();
+            } else {
+                // If not implemented, show a generic message or try to find by ID
+                // For now, let's just toast
+                // android.widget.Toast.makeText(this, "Tutorial not available for this page", android.widget.Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void showLanguageDialog() {
