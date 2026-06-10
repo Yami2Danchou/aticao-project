@@ -45,6 +45,15 @@
 
     <string name="detection_result">Resulta ng Pagsusuri</string>
     <string name="confidence_score">Kumpiyansa: 0%</string>
+    <string name="confidence_high">Mataas ang Pagkakatiwalaan</string>
+    <string name="confidence_medium">Katamtaman ang Pagkakatiwalaan</string>
+    <string name="confidence_low">Mababa ang Pagkakatiwalaan (Inirerekomenda ang pag-scan muli)</string>
+
+    <string name="scan_tips_title">Mga Tip sa Pag-scan</string>
+    <string name="scan_tip_1">• <b>Distansya:</b> Panatilihin ang camera sa layong 10-15cm.</string>
+    <string name="scan_tip_2">• <b>Liwanag:</b> Gumamit ng maliwanag at natural na liwanag.</string>
+    <string name="scan_tip_3">• <b>Focus:</b> Siguraduhing malinaw at nasa gitna ang bunga.</string>
+    <string name="btn_got_it">Naintindihan ko, Simulan ang Pag-scan</string>
     <string name="placeholder_result">Naghihintay ng imahe…</string>
     <string name="btn_capture">Kumuha ng Larawan</string>
     <string name="btn_gallery">Galerya</string>

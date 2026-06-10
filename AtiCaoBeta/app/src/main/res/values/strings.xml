@@ -72,7 +72,17 @@
     <string name="btn_gallery">Gallery</string>
     <string name="detection_result">Detection Result</string>
     <string name="confidence_score">Confidence: 0%</string>
+    <string name="confidence_high">High Reliability</string>
+    <string name="confidence_medium">Medium Reliability</string>
+    <string name="confidence_low">Low Reliability (Rescan Recommended)</string>
 
+    <string name="scan_tips_title">Scan Tips for Best Results</string>
+    <string name="scan_tip_1">• <b>Distance:</b> Keep pod 10-15cm away.</string>
+    <string name="scan_tip_2">• <b>Lighting:</b> Use bright, natural light.</string>
+    <string name="scan_tip_3">• <b>Focus:</b> Ensure the pod is sharp and centered.</string>
+    <string name="btn_got_it">Got it, Start Scan</string>
+    <string name="btn_read_aloud">Read Aloud</string>
+    <string name="disclaimer_expert">Note: These recommendations are based on FAO and UH Mānoa guidelines. Consult your local DA representative for professional assistance.</string>
     <string name="placeholder_result">Waiting for image…</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>

@@ -45,6 +45,15 @@
 
     <string name="detection_result">Resulta sa Pagsusi</string>
     <string name="confidence_score">Kasegurohan: 0%</string>
+    <string name="confidence_high">Taas nga Kasaligan</string>
+    <string name="confidence_medium">Kasarangang Kasaligan</string>
+    <string name="confidence_low">Ubos nga Kasaligan (Girekomenda ang pag-scan pag-usab)</string>
+
+    <string name="scan_tips_title">Mga Tip sa Pag-scan</string>
+    <string name="scan_tip_1">• <b>Gilay-on:</b> Itunong ang camera 10-15cm ang gilay-on.</string>
+    <string name="scan_tip_2">• <b>Kahayag:</b> Gamit og hayag ug natural nga kahayag.</string>
+    <string name="scan_tip_3">• <b>Pokus:</b> Siguroha nga klaro ug naa sa tunga ang bunga.</string>
+    <string name="btn_got_it">Kasabot na ko, Sugod Pag-scan</string>
     <string name="placeholder_result">Naghulat og hulagway…</string>
     <string name="btn_capture">Kuha og Hulagway</string>
     <string name="btn_gallery">Galeriya</string>

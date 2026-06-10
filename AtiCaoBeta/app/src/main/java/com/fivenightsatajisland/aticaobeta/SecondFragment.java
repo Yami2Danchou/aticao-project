@@ -22,6 +22,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.widget.TextViewCompat;
@@ -40,8 +41,10 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import android.speech.tts.TextToSpeech;
 
 public class SecondFragment extends Fragment {
+    private TextToSpeech tts;
 
     private FragmentSecondBinding binding;
     private Uri photoUri;
@@ -91,10 +94,36 @@ public class SecondFragment extends Fragment {
         try {
             classifierAlpha = new CacaoClassifier(requireContext(), "aticao_severity_alpha.tflite", "labels_severity_alpha.txt");
             classifierBeta = new CacaoClassifier(requireContext(), "aticao_severity_beta.tflite", "labels_severity_beta.txt");
+            tts = new TextToSpeech(requireContext(), status -> {
+                if (status != TextToSpeech.ERROR) {
+                    Locale currentLocale = getResources().getConfiguration().getLocales().get(0);
+                    
+                    // Try to set current locale
+                    int result = tts.setLanguage(currentLocale);
+                    
+                    // If Bisaya (ceb) is not supported, use Filipino (fil) which has similar phonetics
+                    if (currentLocale.getLanguage().equals("ceb") && 
+                        (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED)) {
+                        tts.setLanguage(new Locale("fil", "PH"));
+                    } else if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        // General fallback to English
+                        tts.setLanguage(Locale.US);
+                    }
+                }
+            });
         } catch (IOException e) {
             Toast.makeText(getContext(), "Error initializing classifiers", Toast.LENGTH_SHORT).show();
         }
         return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroy() {
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onDestroy();
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -102,13 +131,7 @@ public class SecondFragment extends Fragment {
 
         binding.btnGallery.setOnClickListener(v -> galleryLauncher.launch("image/*"));
         
-        binding.btnCapture.setOnClickListener(v -> {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                openCamera();
-            } else {
-                requestPermissionLauncher.launch(Manifest.permission.CAMERA);
-            }
-        });
+        binding.btnCapture.setOnClickListener(v -> showScanTips());
 
         binding.toggleModel.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (isChecked) {
@@ -120,6 +143,25 @@ public class SecondFragment extends Fragment {
                 NavHostFragment.findNavController(SecondFragment.this)
                         .navigate(R.id.action_SecondFragment_to_FirstFragment)
         );
+    }
+
+    private void showScanTips() {
+        String tips = getString(R.string.scan_tip_1) + "<br>" +
+                getString(R.string.scan_tip_2) + "<br>" +
+                getString(R.string.scan_tip_3);
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.scan_tips_title)
+                .setMessage(android.text.Html.fromHtml(tips, android.text.Html.FROM_HTML_MODE_LEGACY))
+                .setPositiveButton(R.string.btn_got_it, (dialog, which) -> {
+                    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                        openCamera();
+                    } else {
+                        requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 
     private void openCamera() {
@@ -142,17 +184,17 @@ public class SecondFragment extends Fragment {
 
     private void processImage(Uri uri) {
         try {
-            Bitmap bitmap;
+            Bitmap rawBitmap;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 ImageDecoder.Source source = ImageDecoder.createSource(requireContext().getContentResolver(), uri);
-                bitmap = ImageDecoder.decodeBitmap(source, (decoder, info, src) -> decoder.setMutableRequired(true));
+                rawBitmap = ImageDecoder.decodeBitmap(source, (decoder, info, src) -> decoder.setMutableRequired(true));
             } else {
-                bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), uri);
+                rawBitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), uri);
             }
             
             // Fix orientation
-            bitmap = rotateImageIfRequired(bitmap, uri);
-            bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+            Bitmap rotatedBitmap = rotateImageIfRequired(rawBitmap, uri);
+            Bitmap bitmap = rotatedBitmap.copy(Bitmap.Config.ARGB_8888, true);
             
             if (classifierAlpha != null && classifierBeta != null) {
                 resultAlpha = classifierAlpha.classify(bitmap);
@@ -229,7 +271,23 @@ public class SecondFragment extends Fragment {
         String modelName = isAlpha ? getString(R.string.alpha_model_label) : getString(R.string.beta_model_label);
         
         binding.tvResult.setText(formattedResult);
-        binding.tvConfidence.setText(String.format(Locale.getDefault(), "%s Confidence: %.2f%%", modelName, currentResult.confidence));
+        
+        String reliability;
+        int reliabilityColor;
+        if (currentResult.confidence > 85) {
+            reliability = getString(R.string.confidence_high);
+            reliabilityColor = ContextCompat.getColor(requireContext(), R.color.pod_healthy);
+        } else if (currentResult.confidence > 60) {
+            reliability = getString(R.string.confidence_medium);
+            reliabilityColor = ContextCompat.getColor(requireContext(), R.color.pod_warning);
+        } else {
+            reliability = getString(R.string.confidence_low);
+            reliabilityColor = ContextCompat.getColor(requireContext(), R.color.pod_danger);
+        }
+
+        String confidenceText = String.format(Locale.getDefault(), "%s: %.2f%% (%s)", modelName, currentResult.confidence, reliability);
+        binding.tvConfidence.setText(confidenceText);
+        binding.tvConfidence.setTextColor(reliabilityColor);
         
         binding.tvRecommendationLabel.setVisibility(View.VISIBLE);
         binding.tvRecommendation.setVisibility(View.VISIBLE);
@@ -353,14 +411,36 @@ public class SecondFragment extends Fragment {
                 binding.layoutRecImages.addView(footerTv);
             }
             binding.layoutRecImages.setVisibility(View.VISIBLE);
+            binding.btnReadAloud.setVisibility(View.VISIBLE);
+            
+            final String finalGoal = goal;
+            final String[] finalItems = items;
+            final String finalFooter = footer;
+            
+            binding.btnReadAloud.setOnClickListener(v -> tts.speak(finalGoal + ". " + String.join(". ", finalItems) + ". " + finalFooter, TextToSpeech.QUEUE_FLUSH, null, null));
         } else if (lowerResult.contains("healthy")) {
-            binding.tvRecommendation.setText(android.text.Html.fromHtml(getString(R.string.rec_healthy_msg), android.text.Html.FROM_HTML_MODE_LEGACY));
+            String healthyMsg = getString(R.string.rec_healthy_msg);
+            binding.tvRecommendation.setText(android.text.Html.fromHtml(healthyMsg, android.text.Html.FROM_HTML_MODE_LEGACY));
             binding.layoutRecImages.setVisibility(View.GONE);
+            binding.btnReadAloud.setVisibility(View.VISIBLE);
+            binding.btnReadAloud.setOnClickListener(v -> {
+                tts.speak(android.text.Html.fromHtml(healthyMsg, android.text.Html.FROM_HTML_MODE_LEGACY).toString(), 
+                        TextToSpeech.QUEUE_FLUSH, null, null);
+            });
             iconRes = R.drawable.ic_healthy;
         } else {
             binding.tvRecommendation.setText(android.text.Html.fromHtml(getString(R.string.rec_unknown_msg), android.text.Html.FROM_HTML_MODE_LEGACY));
             binding.layoutRecImages.setVisibility(View.GONE);
+            binding.btnReadAloud.setVisibility(View.GONE);
         }
+
+        // Add disclaimer at the end
+        android.widget.TextView disclaimerTv = new android.widget.TextView(requireContext());
+        disclaimerTv.setText(R.string.disclaimer_expert);
+        disclaimerTv.setTextSize(12);
+        disclaimerTv.setPadding(0, 32, 0, 16);
+        disclaimerTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_secondary));
+        binding.layoutRecImages.addView(disclaimerTv);
 
         if (iconRes != 0) {
             binding.tvResult.setCompoundDrawablesWithIntrinsicBounds(iconRes, 0, 0, 0);

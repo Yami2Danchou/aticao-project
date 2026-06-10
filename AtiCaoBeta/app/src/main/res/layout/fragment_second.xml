@@ -154,6 +154,19 @@
                     android:textStyle="bold"
                     android:textColor="@color/text_main" />
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_read_aloud"
+                    style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/btn_read_aloud"
+                    android:visibility="gone"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:iconSize="24dp"
+                    app:icon="@android:drawable/ic_lock_silent_mode_off"
+                    android:textColor="@color/cacao_accent" />
+
                 <TextView
                     android:id="@+id/tv_recommendation"
                     android:layout_width="wrap_content"
