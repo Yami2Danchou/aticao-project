@@ -135,6 +135,10 @@ public class SecondFragment extends Fragment implements TutorialHandler {
         
         binding.btnCapture.setOnClickListener(v -> showScanTips());
 
+        SharedPreferences prefs = requireActivity().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        boolean useBeta = prefs.getBoolean("use_beta_by_default", false);
+        binding.toggleModel.check(useBeta ? R.id.btn_beta : R.id.btn_alpha);
+
         binding.toggleModel.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (isChecked) {
                 updateUI();
@@ -390,7 +394,7 @@ public class SecondFragment extends Fragment implements TutorialHandler {
     }
 
     private void showRecommendation(String rawResult) {
-        String lowerResult = rawResult.toLowerCase();
+        String lowerResult = rawResult.toLowerCase().replace("_", " ");
         int colorRes = R.color.text_secondary;
         int iconRes = 0;
         
@@ -546,19 +550,22 @@ public class SecondFragment extends Fragment implements TutorialHandler {
     }
 
     private void saveToHistory() {
-        String primaryResult = formatResult(resultAlpha.title);
-        String severity = "N/A";
-        String lowerAlpha = resultAlpha.title.toLowerCase();
+        boolean isAlpha = binding.toggleModel.getCheckedButtonId() == R.id.btn_alpha;
+        CacaoClassifier.Recognition currentResult = isAlpha ? resultAlpha : resultBeta;
         
-        if (lowerAlpha.contains("mild")) severity = "Mild";
-        else if (lowerAlpha.contains("moderate")) severity = "Moderate";
-        else if (lowerAlpha.contains("severe")) severity = "Severe";
-        else if (lowerAlpha.contains("healthy")) severity = "Healthy";
+        String primaryResult = formatResult(currentResult.title);
+        String severity = "N/A";
+        String lowerTitle = currentResult.title.toLowerCase();
+        
+        if (lowerTitle.contains("mild")) severity = "Mild";
+        else if (lowerTitle.contains("moderate")) severity = "Moderate";
+        else if (lowerTitle.contains("severe")) severity = "Severe";
+        else if (lowerTitle.contains("healthy")) severity = "Healthy";
 
         String date = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
         
         AppDatabase.getDatabase(getContext()).scanHistoryDao().insert(
-                new ScanHistory(primaryResult, resultAlpha.confidence, date, currentImagePath, severity,
+                new ScanHistory(primaryResult, currentResult.confidence, date, currentImagePath, severity,
                         resultAlpha.confidence, resultBeta.confidence, resultAlpha.title, resultBeta.title)
         );
     }

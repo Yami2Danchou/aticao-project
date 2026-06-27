@@ -41,6 +41,17 @@ public class SettingsFragment extends Fragment implements TutorialHandler {
             prefs.edit().putBoolean("show_rec_images", isChecked).apply();
         });
 
+        com.google.android.material.button.MaterialButtonToggleGroup toggleDefaultModel = view.findViewById(R.id.toggle_default_model);
+        boolean useBeta = prefs.getBoolean("use_beta_by_default", false);
+        toggleDefaultModel.check(useBeta ? R.id.btn_default_beta : R.id.btn_default_alpha);
+        
+        toggleDefaultModel.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (isChecked) {
+                boolean isBeta = (checkedId == R.id.btn_default_beta);
+                prefs.edit().putBoolean("use_beta_by_default", isBeta).apply();
+            }
+        });
+
         view.findViewById(R.id.btn_about).setOnClickListener(v -> showAboutDialog());
         view.findViewById(R.id.btn_contact).setOnClickListener(v -> showContactDialog());
         
@@ -82,6 +93,12 @@ public class SettingsFragment extends Fragment implements TutorialHandler {
                                 .transparentTarget(true)
                                 .tintTarget(true)
                                 .targetRadius(40),
+                        TapTarget.forView(getView().findViewById(R.id.toggle_default_model), getString(R.string.settings_default_model), getString(R.string.settings_model_desc))
+                                .outerCircleColor(R.color.cacao_primary)
+                                .targetCircleColor(R.color.white)
+                                .transparentTarget(true)
+                                .tintTarget(true)
+                                .targetRadius(60),
                         TapTarget.forView(getView().findViewById(R.id.switch_rec_images), getString(R.string.tut_rec_images_title), getString(R.string.tut_rec_images_desc))
                                 .outerCircleColor(R.color.cacao_accent)
                                 .targetCircleColor(R.color.white)

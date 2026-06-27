@@ -77,20 +77,69 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:padding="16dp">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/show_rec_images"
+                    android:text="@string/settings_default_model"
                     android:textColor="@color/text_main"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:layout_marginBottom="8dp" />
 
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_rec_images"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/toggle_default_model"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true"
+                    app:selectionRequired="true">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_default_alpha"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/btn_alpha"
+                        android:textSize="12sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_default_beta"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/btn_beta"
+                        android:textSize="12sp" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/text_secondary"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:alpha="0.3"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/show_rec_images"
+                        android:textColor="@color/text_main"
+                        android:textSize="16sp" />
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switch_rec_images"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

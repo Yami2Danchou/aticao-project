@@ -198,6 +198,8 @@
     <string name="settings_clear_history">Clear Scan History</string>
     <string name="settings_clear_sensor">Clear Environmental Trends History</string>
     <string name="settings_detection">Detection Settings</string>
+    <string name="settings_default_model">Preferred AI Model</string>
+    <string name="settings_model_desc">Select which model to use by default for scans.</string>
     <string name="show_rec_images">Show Action Plan Images</string>
     <string name="about_title">About AtiCao</string>
     <string name="about_message">AtiCao is an AI-powered tool designed to help cacao farmers identify common pests and diseases in cacao pods.\n\nVersion: 1.0.0\nDeveloped by: FiveNightsAtAjIsland\n\nReferences:\n• FAO: Understanding black pod disease in cocoa.\n• Konan &amp; Guest (2007): Black pod rot of cacao (UH Mānoa).\n• Ploetz (2007): Cacao diseases: Important threats to chocolate production.\n• Min. of Agriculture (2017): Black pod disease of cocoa (Trinidad &amp; Tobago).</string>

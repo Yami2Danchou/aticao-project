@@ -1,8 +1,8 @@
-0:Black Pod Rot - Mild
-1:Black Pod Rot - Moderate
-2:Black Pod Rot - Severe
-3:Pod Borer - Mild
-4:Pod Borer - Moderate
-5:Pod Borer - Severe
-6:healthy
+0:black_pod_rot_mild
+1:black_pod_rot_moderate
+2:black_pod_rot_severe
+3:healthy
+4:pod_borer_mild
+5:pod_borer_moderate
+6:pod_borer_severe
 7:unknown
